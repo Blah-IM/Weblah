@@ -26,7 +26,7 @@
 		<ChatList />
 	</aside>
 	<main
-		class="absolute inset-0 w-full translate-x-[110vw] bg-slate-100 shadow-lg transition-transform duration-300 group-data-[weblah-main-visible]:translate-x-0 sm:relative sm:flex-1 sm:translate-x-0 dark:bg-slate-900"
+		class="absolute inset-0 -z-10 w-full translate-x-[110vw] bg-slate-100 shadow-lg transition-transform duration-300 group-data-[weblah-main-visible]:z-0 group-data-[weblah-main-visible]:translate-x-0 sm:relative sm:flex-1 sm:translate-x-0 sm:shadow-none dark:bg-slate-900"
 	>
 		<slot></slot>
 	</main>
