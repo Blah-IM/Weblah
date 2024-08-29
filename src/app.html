@@ -1,14 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="max-w-[100vw] overflow-hidden">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
 		%sveltekit.head%
 	</head>
 	<body
 		data-sveltekit-preload-data="hover"
-		class="relative h-screen select-none overflow-hidden bg-slate-100 text-black dark:bg-slate-900 dark:text-white"
+		class="relative h-screen max-w-[100vw] touch-pan-x touch-pan-y select-none overflow-hidden bg-sb-secondary text-sf-primary"
 	>
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>

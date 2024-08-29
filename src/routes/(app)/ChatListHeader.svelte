@@ -1,12 +1,12 @@
 <script lang="ts">
+	import Button from '$lib/components/Button.svelte';
+	import InputFrame from '$lib/components/InputFrame.svelte';
 	import { AvatarBeam } from 'svelte-boring-avatars';
 </script>
 
-<header class="flex items-center justify-stretch gap-2 border-b border-slate-200 p-2 shadow-sm">
+<header class="flex items-center justify-stretch gap-2 border-b border-ss-secondary p-2 shadow-sm">
 	<div><AvatarBeam size={30} name="Shibo Lyu" /></div>
-	<div
-		class="flex flex-1 items-center gap-1 rounded-md bg-slate-50 px-2 py-1 ring-1 ring-slate-100"
-	>
+	<InputFrame class="flex-1">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
@@ -24,10 +24,8 @@
 			placeholder="Search"
 			class="w-full flex-1 bg-transparent text-sm leading-4 text-slate-900 focus:outline-none"
 		/>
-	</div>
-	<button
-		class="flex size-7 cursor-default items-center justify-center rounded-md text-slate-500 ring-1 ring-slate-100 transition-shadow duration-200 hover:shadow-sm"
-	>
+	</InputFrame>
+	<Button class="size-8">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
@@ -43,5 +41,5 @@
 			/>
 		</svg>
 		<span class="sr-only">Compose</span>
-	</button>
+	</Button>
 </header>

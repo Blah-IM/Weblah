@@ -25,6 +25,16 @@ export default [
 			parserOptions: {
 				parser: ts.parser
 			}
+		},
+		rules: {
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{ varsIgnorePattern: '^(\\$\\$(Props|Events|Slots)$|_)' }
+			],
+			'@typescript-eslint/no-empty-object-type': [
+				'error',
+				{ allowInterfaces: 'with-single-extends' }
+			]
 		}
 	},
 	{
