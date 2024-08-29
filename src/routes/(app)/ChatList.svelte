@@ -3,7 +3,7 @@
 	import ChatListItem from './ChatListItem.svelte';
 </script>
 
-<div class="flex h-screen flex-col justify-stretch">
+<div class="flex h-[100dvh] flex-col justify-stretch">
 	<ChatListHeader />
 	<div class="min-h-0 flex-1 touch-pan-y overflow-y-auto">
 		<ul>
