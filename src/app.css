@@ -43,3 +43,9 @@
 		}
 	}
 }
+
+@layer utilities {
+	.rich-text {
+		@apply prose prose-slate dark:prose-invert prose-p:my-0 prose-p:leading-tight prose-code:before:content-[''] prose-code:after:content-[''];
+	}
+}
