@@ -3,13 +3,19 @@
 
 	import type { Message } from '$lib/types';
 	import ChatMessage from './ChatMessage.svelte';
+	import { tick } from 'svelte';
 
 	export let messages: Message[] = [];
 	export let mySenderId: string;
 
-	let ref: VList<Message>;
+	let ref: VList<Message> | undefined;
 
-	$: ref?.scrollToIndex(messages.length - 1, { align: 'end', smooth: true });
+	async function scrollToIndex(index: number, smooth = true) {
+		await tick();
+		ref?.scrollToIndex(index, { align: 'end', smooth });
+	}
+
+	$: scrollToIndex(messages.length - 1);
 </script>
 
 <VList data={messages} let:item={message} class="size-full pt-2" bind:this={ref}>
