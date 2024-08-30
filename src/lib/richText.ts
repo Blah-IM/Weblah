@@ -13,7 +13,7 @@ export const blahRichTextSpanAttributesSchema = z.object({
 export type BlahRichTextSpanAttributes = z.input<typeof blahRichTextSpanAttributesSchema>;
 
 export const blahRichTextSpanSchema = z.union([
-	z.tuple([z.string()]),
+	z.string(),
 	z.tuple([z.string(), blahRichTextSpanAttributesSchema])
 ]);
 export type BlahRichTextSpan = z.input<typeof blahRichTextSpanSchema>;
@@ -42,7 +42,7 @@ function deltaAttributesToBlahRichTextSpanAttributes(
 	if (attributes.link) blahRichTextSpanAttributes.link = attributes.link;
 
 	if (attributes.underline) blahRichTextSpanAttributes.u = true;
-	if (attributes.strike) blahRichTextSpanAttributes.s = true;
+	if (attributes.strikethrough) blahRichTextSpanAttributes.s = true;
 
 	return isObjectEmpty(blahRichTextSpanAttributes) ? null : blahRichTextSpanAttributes;
 }
@@ -57,12 +57,12 @@ export function deltaToBlahRichText(delta: Delta): BlahRichText {
 		const attributes = deltaAttributesToBlahRichTextSpanAttributes(op.attributes);
 
 		const line = lines.shift();
-		block.push(attributes ? [line, attributes] : [line]);
+		block.push(attributes ? [line, attributes] : line);
 
 		for (const line of lines) {
 			blocks.push(block);
 			block = [];
-			block.push(attributes ? [line, attributes] : [line]);
+			block.push(attributes ? [line, attributes] : line);
 		}
 	}
 

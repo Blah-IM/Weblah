@@ -40,6 +40,7 @@
 		"svelte-boring-avatars": "^1.2.6",
 		"tailwind-merge": "^2.5.2",
 		"typewriter-editor": "^0.12.6",
+		"virtua": "^0.33.4",
 		"zod": "^3.23.8"
 	}
 }

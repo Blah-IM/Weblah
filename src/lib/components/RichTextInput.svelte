@@ -23,7 +23,7 @@
 			<p>{placeholder}</p>
 		</div>
 	{:then Input}
-		<svelte:component this={Input} bind:delta class={className} {placeholder}>
+		<svelte:component this={Input} bind:delta {placeholder}>
 			<slot />
 		</svelte:component>
 	{/await}

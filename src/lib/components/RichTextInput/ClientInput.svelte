@@ -1,10 +1,28 @@
 <script lang="ts">
-	import { Delta, Editor, asRoot } from 'typewriter-editor';
+	import { Delta, Editor, asRoot, h } from 'typewriter-editor';
 
 	export let delta: Delta = new Delta();
 	export let placeholder: string = '';
 
 	const editor = new Editor();
+	editor.typeset.formats.add({
+		name: 'underline',
+		selector: 'span[data-weblah-brt=underline]',
+		styleSelector: '[style*="text-decoration:underline"], [style*="text-decoration: underline"]',
+		commands: (editor) => () => editor.toggleTextFormat({ underline: true }),
+		shortcuts: 'Mod+U',
+		render: (attributes, children) => h('span', { 'data-weblah-brt': 'underline' }, children)
+	});
+	editor.typeset.formats.add({
+		name: 'strikethrough',
+		selector: 's',
+		styleSelector:
+			'[style*="text-decoration:line-through"], [style*="text-decoration: line-through"]',
+		commands: (editor) => () => editor.toggleTextFormat({ strikethrough: true }),
+		shortcuts: 'Mod+Shift+X',
+		render: (attributes, children) => h('s', null, children)
+	});
+
 	delta = editor.getDelta();
 	editor.on('change', () => {
 		delta = editor.getDelta();
