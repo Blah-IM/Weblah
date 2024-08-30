@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Button from '$lib/components/Button.svelte';
+	import BgPattern from '$lib/components/BgPattern.svelte';
+	import ChatHeader from './ChatHeader.svelte';
+	import ChatInput from './ChatInput.svelte';
 </script>
 
-<p><Button href="/">Close</Button> History Page for {$page.params.chatId}</p>
+<div class="flex h-full w-full flex-col justify-stretch">
+	<ChatHeader
+		chat={{ id: 'blah', name: 'Blah IM Interest Group', type: 'group' }}
+		outsideUnreadCount={263723}
+	/>
+	<BgPattern class="flex-1" pattern="charlieBrown"></BgPattern>
+	<ChatInput />
+</div>

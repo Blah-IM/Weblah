@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import colors from 'tailwindcss/colors';
 
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -14,6 +15,7 @@ export default {
 	theme: {
 		extend: {
 			colors: {
+				accent: colors.blue,
 				// Semantic Background
 				sb: {
 					primary: 'var(--weblah-color-sb-primary)',

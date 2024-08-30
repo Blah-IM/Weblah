@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import type { Delta } from 'typewriter-editor';
+	import InputFrame from '$lib/components/InputFrame.svelte';
+	import { tw } from '$lib/tw';
 
-	export let delta: Delta;
+	export let delta: Delta | null = null;
+	export let placeholder: string = '';
 
 	let className = '';
 	export { className as class };
@@ -14,6 +17,14 @@
 	};
 </script>
 
-{#await loadClientComponent() then Input}
-	<svelte:component this={Input} bind:delta class={className}><slot /></svelte:component>
-{/await}
+<InputFrame class={tw('overflow-y-auto', className)}>
+	{#await loadClientComponent()}
+		<div class="rich-text opacity-50">
+			<p>{placeholder}</p>
+		</div>
+	{:then Input}
+		<svelte:component this={Input} bind:delta class={className} {placeholder}>
+			<slot />
+		</svelte:component>
+	{/await}
+</InputFrame>
