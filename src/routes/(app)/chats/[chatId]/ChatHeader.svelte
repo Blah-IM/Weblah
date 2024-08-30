@@ -8,7 +8,9 @@
 	export let outsideUnreadCount = 0;
 </script>
 
-<div class="flex w-full gap-2 border-b border-ss-secondary bg-sb-primary p-2 shadow-sm">
+<div
+	class="box-border flex min-h-[calc(3rem+1px)] w-full gap-2 border-b border-ss-secondary bg-sb-primary p-2 shadow-sm"
+>
 	<Button href="/" class="rounded-full sm:hidden">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

@@ -10,15 +10,15 @@
 
 	let messages: Message[] = Array.from({ length: 10 }).map(createRandomMessage);
 
-	// onMount(() => {
-	// 	const interval = setInterval(
-	// 		() => {
-	// 			messages = [...messages, createRandomMessage()];
-	// 		},
-	// 		3000 + Math.random() * 10000
-	// 	);
-	// 	return () => clearInterval(interval);
-	// });
+	onMount(() => {
+		const interval = setInterval(
+			() => {
+				messages = [...messages, createRandomMessage()];
+			},
+			3000 + Math.random() * 10000
+		);
+		return () => clearInterval(interval);
+	});
 </script>
 
 <div class="flex h-full w-full flex-col justify-stretch">
