@@ -26,7 +26,7 @@
 	</Button>
 	<RichTextInput bind:delta placeholder="Message" class="max-h-40 flex-1" />
 	<Button
-		class="before:from-accent-400 before:to-accent-500 relative p-1.5 ring-0 before:absolute before:-inset-px before:rounded-[7px] before:bg-gradient-to-b before:from-40% before:ring-1 before:ring-inset before:ring-black/10"
+		class="before:from-accent-400 before:to-accent-500 duraion-200 relative p-1.5 ring-0 before:absolute before:-inset-px before:rounded-[7px] before:bg-gradient-to-b before:from-40% before:ring-1 before:ring-inset before:ring-black/10 before:transition-shadow active:before:shadow-inner"
 	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
