@@ -4,7 +4,7 @@ A web client for Blah IM, built with [SvelteKit](https://kit.svelte.dev) & [Tail
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've created a project and installed dependencies with `npm install`, start a development server:
 
 ```bash
 npm run dev
