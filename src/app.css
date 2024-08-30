@@ -46,6 +46,6 @@
 
 @layer utilities {
 	.rich-text {
-		@apply prose prose-slate dark:prose-invert prose-p:my-0 prose-p:leading-tight prose-code:before:content-[''] prose-code:after:content-[''];
+		@apply prose prose-slate max-w-none dark:prose-invert prose-p:my-0 prose-p:leading-tight prose-code:before:content-[''] prose-code:after:content-[''];
 	}
 }
