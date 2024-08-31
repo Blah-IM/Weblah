@@ -8,17 +8,22 @@
 	import ChatHistory from './ChatHistory.svelte';
 	import ChatInput from './ChatInput.svelte';
 
-	let messages: Message[] = Array.from({ length: 10 }).map(createRandomMessage);
+	let messages: Message[] = [
+		...Array.from({ length: 5 }).map(() => createRandomMessage({})),
+		...Array.from({ length: 2 }).map(() =>
+			createRandomMessage({ sender: { id: '_send', name: 'Shibo Lyu' } })
+		)
+	];
 
-	onMount(() => {
-		const interval = setInterval(
-			() => {
-				messages = [...messages, createRandomMessage()];
-			},
-			3000 + Math.random() * 10000
-		);
-		return () => clearInterval(interval);
-	});
+	// onMount(() => {
+	// 	const interval = setInterval(
+	// 		() => {
+	// 			messages = [...messages, createRandomMessage({})];
+	// 		},
+	// 		3000 + Math.random() * 10000
+	// 	);
+	// 	return () => clearInterval(interval);
+	// });
 </script>
 
 <div class="flex h-full w-full flex-col justify-stretch">
