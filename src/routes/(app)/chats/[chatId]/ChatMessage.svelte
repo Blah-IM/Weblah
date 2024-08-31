@@ -21,7 +21,7 @@
 				sm:max-w-[70%] lg:max-w-[50%]
 			"
 		>
-			<RichTextRenderer content={message.content} class="z-10" />
+			<RichTextRenderer content={message.content} class="z-10 select-text" />
 		</div>
 	</div>
 </div>
