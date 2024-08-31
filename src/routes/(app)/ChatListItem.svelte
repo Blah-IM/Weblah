@@ -29,7 +29,7 @@
 				</time>
 			</div>
 			<div class="flex items-end gap-1">
-				<p class="line-clamp-2 h-[2.5em] text-sm leading-tight text-sf-secondary">
+				<p class="line-clamp-2 h-[2.5em] flex-1 text-sm leading-tight text-sf-secondary">
 					{#if chat.id !== chat.lastMessage.sender.id}
 						<span class="text-sf-primary">{chat.lastMessage.sender.name}: </span>
 					{/if}
