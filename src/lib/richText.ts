@@ -1,3 +1,4 @@
+import canonicalize from 'canonicalize';
 import type { AttributeMap, Delta } from 'typewriter-editor';
 import { z } from 'zod';
 
@@ -18,10 +19,7 @@ export const blahRichTextSpanSchema = z.union([
 ]);
 export type BlahRichTextSpan = z.input<typeof blahRichTextSpanSchema>;
 
-export const blahRichTextBlockSchema = z.array(blahRichTextSpanSchema);
-export type BlahRichTextBlock = z.input<typeof blahRichTextBlockSchema>;
-
-export const blahRichTextSchema = z.array(blahRichTextBlockSchema);
+export const blahRichTextSchema = z.array(blahRichTextSpanSchema);
 export type BlahRichText = z.input<typeof blahRichTextSchema>;
 
 function isObjectEmpty(obj: object) {
@@ -48,23 +46,34 @@ function deltaAttributesToBlahRichTextSpanAttributes(
 }
 
 export function deltaToBlahRichText(delta: Delta): BlahRichText {
-	const blocks: BlahRichText = [];
+	const spans: BlahRichText = [];
 
-	let block: BlahRichTextBlock = [];
-	for (const op of delta.ops) {
-		const lines = op.insert?.split('\n');
-		if (!lines) continue;
-		const attributes = deltaAttributesToBlahRichTextSpanAttributes(op.attributes);
+	let lastText = '';
+	let lastAttributes: BlahRichTextSpanAttributes | null = null;
+	let canonicalizedLastAttributes: string = 'null';
 
-		const line = lines.shift();
-		block.push(attributes ? [line, attributes] : line);
-
-		for (const line of lines) {
-			blocks.push(block);
-			block = [];
-			block.push(attributes ? [line, attributes] : line);
-		}
+	function commitSpan() {
+		spans.push(lastAttributes === null ? lastText : [lastText, lastAttributes]);
 	}
 
-	return blocks;
+	for (const op of delta.ops) {
+		// Not sure in what cases op.insert would not be a string, but let's be safe
+		if (typeof op.insert !== 'string') continue;
+
+		const attributes = deltaAttributesToBlahRichTextSpanAttributes(op.attributes);
+		const canonicalizedAttributes = canonicalize(attributes) ?? 'null';
+
+		if (canonicalizedAttributes === canonicalizedLastAttributes) {
+			lastText += op.insert;
+			continue;
+		}
+
+		commitSpan();
+		lastText = op.insert;
+		lastAttributes = attributes;
+		canonicalizedLastAttributes = canonicalizedAttributes;
+	}
+	commitSpan();
+
+	return spans;
 }

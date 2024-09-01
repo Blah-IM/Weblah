@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { BlahRichTextSpanAttributes } from '$lib/richText';
+	import PlainTextRenderer from './PlainTextRenderer.svelte';
 
 	// From outside to inside, better align this with the RichTextInput
 	const renderOrder: (keyof BlahRichTextSpanAttributes)[] = [
@@ -30,8 +31,10 @@
 	const nextAttribute = attribute ? (renderOrder[renderOrder.indexOf(attribute) + 1] ?? '') : null;
 </script>
 
-{#if attribute === '' || !attributes[attribute]}
-	{text}
+{#if attribute === ''}
+	<PlainTextRenderer {text} />
+{:else if !attributes[attribute]}
+	<svelte:self {...$$props} attribute={nextAttribute} />
 {:else if attribute === 'link'}
 	<a href={attributes.link} target="_blank">
 		<svelte:self {...$$props} attribute={nextAttribute} />

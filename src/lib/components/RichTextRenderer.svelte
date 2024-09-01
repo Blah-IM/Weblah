@@ -2,6 +2,7 @@
 	import type { BlahRichText } from '$lib/richText';
 	import { tw } from '$lib/tw';
 	import RichTextSpan from './RichTextRenderer/RichTextSpan.svelte';
+	import PlainTextRenderer from './RichTextRenderer/PlainTextRenderer.svelte';
 
 	export let content: BlahRichText;
 	let className = '';
@@ -9,20 +10,14 @@
 </script>
 
 <div class={tw('rich-text', className)}>
-	{#each content as block}
-		<p>
-			{#each block as span}
-				{#if typeof span === 'string'}
-					{#if span === ''}
-						<br />
-					{:else}
-						{span}
-					{/if}
-				{:else}
-					{@const [text, attributes] = span}
-					<RichTextSpan {text} {attributes} />
-				{/if}
-			{/each}
-		</p>
-	{/each}
+	<p>
+		{#each content as span}
+			{#if typeof span === 'string'}
+				<PlainTextRenderer text={span} />
+			{:else}
+				{@const [text, attributes] = span}
+				<RichTextSpan {text} {attributes} />
+			{/if}
+		{/each}
+	</p>
 </div>
