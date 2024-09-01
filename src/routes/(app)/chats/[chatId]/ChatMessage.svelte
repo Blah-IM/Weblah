@@ -40,7 +40,7 @@
 		>
 			<RichTextRenderer
 				content={message.content}
-				class="z-10 select-text overflow-hidden px-3 py-2"
+				class="z-10 select-text overflow-hidden rounded-2xl px-3 py-2"
 			/>
 		</div>
 	</div>

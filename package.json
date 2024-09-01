@@ -37,6 +37,7 @@
 	"type": "module",
 	"dependencies": {
 		"@zeabur/svelte-adapter": "^1.0.0",
+		"canonicalize": "^2.0.0",
 		"svelte-boring-avatars": "^1.2.6",
 		"tailwind-merge": "^2.5.2",
 		"typewriter-editor": "^0.12.6",
