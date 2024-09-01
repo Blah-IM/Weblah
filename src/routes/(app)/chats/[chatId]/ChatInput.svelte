@@ -25,7 +25,7 @@
 		<span class="sr-only">Attach</span>
 	</Button>
 	<RichTextInput bind:delta placeholder="Message" class="max-h-40 flex-1" />
-	<Button class="p-1.5">
+	<Button class="p-1.5" variant="primary">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"

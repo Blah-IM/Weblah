@@ -17,9 +17,9 @@
 	}
 
 	.weblah-dark-theme {
-		--weblah-color-sb-primary: theme(colors.slate.950);
-		--weblah-color-sb-secondary: theme(colors.slate.900);
-		--weblah-color-sb-tertiary: theme(colors.slate.800);
+		--weblah-color-sb-primary: theme(colors.slate.900);
+		--weblah-color-sb-secondary: theme(colors.slate.950);
+		--weblah-color-sb-tertiary: theme(colors.black);
 
 		--weblah-color-sf-primary: theme(colors.slate.100);
 		--weblah-color-sf-secondary: theme(colors.slate.400);
@@ -38,8 +38,12 @@
 	}
 
 	@media (prefers-color-scheme: dark) {
-		:not([data-weblah-color-scheme='light'] *) {
+		:root {
 			@apply weblah-dark-theme;
+		}
+
+		:is([data-weblah-color-scheme='light'] *) {
+			@apply weblah-light-theme;
 		}
 	}
 }
