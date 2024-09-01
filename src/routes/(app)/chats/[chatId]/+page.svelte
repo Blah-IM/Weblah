@@ -31,9 +31,10 @@
 	onMount(() => {
 		const server = new BlahChatServerConnection('https://blah.oxa.li/api');
 		loadChat(server);
-		return server.subscribeRoom(roomId, (message) => {
+		const { unsubscribe } = server.subscribeRoom(roomId, (message) => {
 			messages = [...messages, messageFromBlah(message)];
 		});
+		return unsubscribe;
 	});
 </script>
 
