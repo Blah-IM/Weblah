@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { BlahKeyPair } from '../keypair';
+import { BlahKeyPair } from '.';
 
 let keypair: BlahKeyPair;
 
