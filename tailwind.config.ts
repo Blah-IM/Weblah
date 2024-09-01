@@ -18,6 +18,7 @@ export default {
 				accent: colors.blue,
 				// Semantic Background
 				sb: {
+					overlay: 'var(--weblah-color-sb-overlay)',
 					primary: 'var(--weblah-color-sb-primary)',
 					secondary: 'var(--weblah-color-sb-secondary)',
 					tertiary: 'var(--weblah-color-sb-tertiary)'

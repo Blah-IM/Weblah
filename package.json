@@ -37,10 +37,13 @@
 	"type": "module",
 	"dependencies": {
 		"@zeabur/svelte-adapter": "^1.0.0",
+		"bits-ui": "^0.21.13",
 		"canonicalize": "^2.0.0",
 		"svelte-boring-avatars": "^1.2.6",
+		"svelte-hero-icons": "^5.2.0",
 		"tailwind-merge": "^2.5.2",
 		"typewriter-editor": "^0.12.6",
+		"unique-names-generator": "^4.7.1",
 		"virtua": "^0.33.4",
 		"zod": "^3.23.8"
 	}

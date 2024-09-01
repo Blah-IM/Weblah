@@ -4,6 +4,7 @@
 
 @layer base {
 	.weblah-light-theme {
+		--weblah-color-sb-overlay: theme(colors.white);
 		--weblah-color-sb-primary: theme(colors.slate.50);
 		--weblah-color-sb-secondary: theme(colors.slate.100);
 		--weblah-color-sb-tertiary: theme(colors.slate.200);
@@ -17,6 +18,7 @@
 	}
 
 	.weblah-dark-theme {
+		--weblah-color-sb-overlay: theme(colors.slate.800);
 		--weblah-color-sb-primary: theme(colors.slate.900);
 		--weblah-color-sb-secondary: theme(colors.slate.950);
 		--weblah-color-sb-tertiary: theme(colors.black);

@@ -16,6 +16,9 @@ export class BlahKeyPair {
 	get id() {
 		return this.publicIdentity.id;
 	}
+	get name() {
+		return this.publicIdentity.name;
+	}
 
 	private constructor(publicIdentity: BlahPublicIdentity, privateKey: CryptoKey) {
 		this.publicIdentity = publicIdentity;

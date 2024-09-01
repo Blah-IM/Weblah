@@ -1,14 +1,26 @@
 import canonicalize from 'canonicalize';
 import type { BlahSignedPayload } from './signedPayload';
 import { bufToHex, hexToBuf } from './utils';
+import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
+
+export function generateName(id: string) {
+	return uniqueNamesGenerator({
+		seed: id,
+		style: 'capital',
+		separator: ' ',
+		dictionaries: [adjectives, animals]
+	});
+}
 
 export class BlahPublicIdentity {
 	private publicKey: CryptoKey;
 	id: string;
+	name: string;
 
 	private constructor(publicKey: CryptoKey, id: string) {
 		this.publicKey = publicKey;
 		this.id = id;
+		this.name = generateName(id);
 	}
 
 	static async fromPublicKey(publicKey: CryptoKey): Promise<BlahPublicIdentity> {

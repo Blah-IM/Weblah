@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import InputFrame from '$lib/components/InputFrame.svelte';
-	import { AvatarBeam } from 'svelte-boring-avatars';
+	import IdentityMenu from './IdentityMenu.svelte';
 </script>
 
 <header class="flex items-center justify-stretch gap-2 border-b border-ss-secondary p-2 shadow-sm">
-	<div><AvatarBeam size={30} name="Shibo Lyu" /></div>
+	<IdentityMenu />
 	<InputFrame class="flex-1">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
