@@ -52,13 +52,11 @@ export class BlahChatServerConnection {
 		});
 	}
 
-	private async apiCall<P, R>(path: `/${string}`, payload?: P): Promise<R> {
+	private async apiCall<P, R>(method: 'POST' | 'GET', path: `/${string}`, payload?: P): Promise<R> {
 		if (payload && !this.keypair) throw new Error('Must make authorized API call with a keypair');
 
 		let response: Response;
-		if (payload) {
-			response = await this.fetchWithSignedPayload(`${this.endpoint}${path}`, payload);
-		} else {
+		if (method === 'GET') {
 			if (this.keypair) {
 				response = await this.fetchWithAuthHeader(`${this.endpoint}${path}`);
 			} else {
@@ -66,9 +64,11 @@ export class BlahChatServerConnection {
 					headers: BlahChatServerConnection.commonHeaders
 				});
 			}
+		} else {
+			response = await this.fetchWithSignedPayload(`${this.endpoint}${path}`, payload, { method });
 		}
 
-		if (!response.ok) throw BlahError.fromResponse(response);
+		if (!response.ok) throw await BlahError.fromResponse(response);
 		return await response.json();
 	}
 
@@ -82,20 +82,20 @@ export class BlahChatServerConnection {
 			user: this.keypair.id
 		};
 
-		await this.apiCall(`/room/${id}/join`, payload);
+		await this.apiCall('POST', `/room/${id}/admin`, payload);
 	}
 
 	async sendMessage(room: string, message: BlahRichText): Promise<void> {
 		if (!this.keypair) throw new Error('Must send message with a keypair');
 		const payload: BlahMessage = { room, rich_text: message, typ: 'chat' };
-		await this.fetchWithSignedPayload(`/room/${room}/item`, payload);
+		await this.apiCall('POST', `/room/${room}/item`, payload);
 	}
 
 	async fetchRoom(
 		roomId: string
 	): Promise<{ room: BlahRoomInfo; messages: BlahSignedPayload<BlahMessage>[] }> {
 		const [room, messages]: [BlahRoomInfo, [number, BlahSignedPayload<BlahMessage>][]] =
-			await this.apiCall(`/room/${roomId}/item`);
+			await this.apiCall('GET', `/room/${roomId}/item`);
 		return { room, messages: messages.toSorted(([a], [b]) => a - b).map(([, message]) => message) };
 	}
 

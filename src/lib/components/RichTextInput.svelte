@@ -5,6 +5,7 @@
 	import { tw } from '$lib/tw';
 
 	export let delta: Delta | null = null;
+	export let plainText: string | undefined = undefined;
 	export let placeholder: string = '';
 
 	let className = '';
@@ -23,7 +24,7 @@
 			<p>{placeholder}</p>
 		</div>
 	{:then Input}
-		<svelte:component this={Input} bind:delta {placeholder}>
+		<svelte:component this={Input} bind:delta bind:plainText {placeholder} on:keydown>
 			<slot />
 		</svelte:component>
 	{/await}

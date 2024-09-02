@@ -1,12 +1,57 @@
 <script lang="ts">
+	import type { BlahChatServerConnection } from '$lib/blah/connection/chatServer';
+	import { BlahError } from '$lib/blah/connection/error';
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
+	import { deltaToBlahRichText } from '$lib/richText';
 	import type { Delta } from 'typewriter-editor';
 
-	let delta: Delta | null = null;
+	export let roomId: string;
+	export let server: BlahChatServerConnection | undefined;
+
+	let delta: Delta;
+	let plainText: string = '';
+	let form: HTMLFormElement | null = null;
+	let sendDisabled = false;
+
+	function onInputKeydown(event: KeyboardEvent) {
+		console.log(event.key, event.shiftKey, event.isComposing, plainText);
+		if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+			event.preventDefault();
+			form?.requestSubmit();
+		}
+	}
+
+	async function submit() {
+		if (!server || plainText.trim() === '') return;
+		console.log('submit');
+
+		const brt = deltaToBlahRichText(delta);
+		sendDisabled = true;
+		try {
+			await server.sendMessage(roomId, brt);
+		} catch (e) {
+			console.log(e);
+			if (e instanceof BlahError && e.statusCode === 403) {
+				// TODO: Actual error handling
+				await server.joinRoom(roomId);
+				await server.sendMessage(roomId, brt);
+			} else {
+				throw e;
+			}
+		}
+		sendDisabled = false;
+		plainText = '';
+	}
+
+	$: sendDisabled = !!server;
 </script>
 
-<div class="flex items-end gap-2 border-t border-ss-secondary bg-sb-primary p-2 shadow-sm">
+<form
+	class="flex items-end gap-2 border-t border-ss-secondary bg-sb-primary p-2 shadow-sm"
+	bind:this={form}
+	on:submit|preventDefault={submit}
+>
 	<Button class="p-1.5">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -24,8 +69,14 @@
 		</svg>
 		<span class="sr-only">Attach</span>
 	</Button>
-	<RichTextInput bind:delta placeholder="Message" class="max-h-40 flex-1" />
-	<Button class="p-1.5" variant="primary">
+	<RichTextInput
+		bind:delta
+		bind:plainText
+		placeholder="Message"
+		class="max-h-40 flex-1"
+		on:keydown={onInputKeydown}
+	/>
+	<Button class="p-1.5" variant="primary" type="submit" disabled={sendDisabled}>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
@@ -38,4 +89,4 @@
 		</svg>
 		<span class="sr-only">Send</span>
 	</Button>
-</div>
+</form>

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/DropdownMenu';
 	import { AvatarBeam } from 'svelte-boring-avatars';
-	import { keyStore, currentKeyIndex } from '$lib/keystore';
+	import { keyStore, currentKeyIndex, currentKeyPair } from '$lib/keystore';
 	import { BlahKeyPair, generateName } from '$lib/blah/crypto';
 
 	let currentKeyId: string | undefined;
 	let currentKeyName: string | null;
 	$: {
-		currentKeyId = $keyStore[$currentKeyIndex]?.id;
+		currentKeyId = $currentKeyPair?.id;
 		currentKeyName = currentKeyId ? generateName(currentKeyId) : null;
 	}
 

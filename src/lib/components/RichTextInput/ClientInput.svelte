@@ -2,6 +2,7 @@
 	import { Delta, Editor, asRoot, h } from 'typewriter-editor';
 
 	export let delta: Delta = new Delta();
+	export let plainText: string | undefined = undefined;
 	export let placeholder: string = '';
 
 	const editor = new Editor();
@@ -23,12 +24,13 @@
 		render: (attributes, children) => h('s', null, children)
 	});
 
-	delta = editor.getDelta();
 	editor.on('change', () => {
 		delta = editor.getDelta();
+		if (typeof plainText === 'string') plainText = editor.getText();
 	});
 
-	$: editor.setDelta(delta);
+	$: editor.setDelta(delta ?? new Delta());
+	$: if (typeof plainText === 'string' && plainText !== editor.getText()) editor.setText(plainText);
 </script>
 
 <div
@@ -38,6 +40,9 @@
 		? 'true'
 		: undefined}
 	data-weblah-placeholder={placeholder}
+	on:keydown
+	role="textbox"
+	tabindex="0"
 >
 	<slot />
 </div>
