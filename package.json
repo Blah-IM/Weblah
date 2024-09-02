@@ -41,6 +41,7 @@
 		"canonicalize": "^2.0.0",
 		"svelte-boring-avatars": "^1.2.6",
 		"svelte-hero-icons": "^5.2.0",
+		"svelte-persisted-store": "^0.11.0",
 		"tailwind-merge": "^2.5.2",
 		"typewriter-editor": "^0.12.6",
 		"unique-names-generator": "^4.7.1",

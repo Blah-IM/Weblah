@@ -5,8 +5,11 @@
 	import { BlahKeyPair, generateName } from '$lib/blah/crypto';
 
 	let currentKeyId: string | undefined;
-	$: currentKeyId = $keyStore[$currentKeyIndex]?.id;
-	$: currentKeyName = currentKeyId ? generateName(currentKeyId) : null;
+	let currentKeyName: string | null;
+	$: {
+		currentKeyId = $keyStore[$currentKeyIndex]?.id;
+		currentKeyName = currentKeyId ? generateName(currentKeyId) : null;
+	}
 
 	async function createKeyPair() {
 		const newKeyPair = await BlahKeyPair.generate();
@@ -14,12 +17,18 @@
 		$keyStore = [...$keyStore, encoded];
 		$currentKeyIndex = $keyStore.length - 1;
 	}
+
+	function setCurrentKeyIndex(idx: string | undefined | null) {
+		$currentKeyIndex = parseInt(idx ?? '0', 10);
+	}
 </script>
 
-<DropdownMenu.Root>
+<DropdownMenu.Root closeOnItemClick={false}>
 	<DropdownMenu.Trigger>
 		{#if currentKeyId}
-			<AvatarBeam size={30} name={currentKeyId} />
+			{#key currentKeyId}
+				<AvatarBeam size={30} name={currentKeyId} />
+			{/key}
 			<span class="sr-only">Using identity {currentKeyName}</span>
 		{:else}
 			<div
@@ -29,19 +38,26 @@
 			<span class="sr-only">Using no identity</span>
 		{/if}
 	</DropdownMenu.Trigger>
-	<DropdownMenu.Content>
+	<DropdownMenu.Content class="origin-top-left">
 		{#if $keyStore.length > 0}
-			<DropdownMenu.RadioGroup bind:value={currentKeyId}>
-				{#each $keyStore as { id }}
+			<DropdownMenu.RadioGroup
+				value={$currentKeyIndex.toString()}
+				onValueChange={setCurrentKeyIndex}
+			>
+				{#each $keyStore as { id }, idx}
 					{@const name = generateName(id)}
-					<DropdownMenu.RadioItem value={id}>
-						<AvatarBeam size={30} {name} />
-						<span>{name}</span>
+					<DropdownMenu.RadioItem value={idx.toString()}>
+						<div class="flex items-center gap-2 py-0.5">
+							<AvatarBeam size={24} name={id} />
+							<span>{name}</span>
+						</div>
 					</DropdownMenu.RadioItem>
 				{/each}
 			</DropdownMenu.RadioGroup>
 			<DropdownMenu.Separator />
+			<DropdownMenu.Item>Manage identities</DropdownMenu.Item>
+		{:else}
+			<DropdownMenu.Item on:click={createKeyPair}>Create new identity</DropdownMenu.Item>
 		{/if}
-		<DropdownMenu.Item on:click={createKeyPair}>Create new identity</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
