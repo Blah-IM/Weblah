@@ -13,13 +13,13 @@
 	export let info: Readable<Chat>;
 	export let messages: Readable<Message[]>;
 
-	type $$Events = {
-		sendMessage: BlahRichText;
-	};
+	interface $$Events {
+		sendMessage: CustomEvent<BlahRichText>;
+	}
 </script>
 
 <ChatHeader info={$info} outsideUnreadCount={263723} />
-<BgPattern class="flex-1" pattern="charlieBrown">
+<BgPattern class="w-full flex-1" pattern="charlieBrown">
 	<ChatHistory messages={$messages} mySenderId={$currentKeyPair?.id} />
 </BgPattern>
 <ChatInput on:sendMessage />

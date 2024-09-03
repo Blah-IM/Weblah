@@ -95,6 +95,23 @@ export class BlahChatServerConnection {
 		await this.apiCall('POST', `/room/${id}/admin`, payload);
 	}
 
+	private async fetchRoomList(filter: 'joined' | 'public'): Promise<BlahRoomInfo[]> {
+		const { rooms }: { rooms: BlahRoomInfo[] } = await this.apiCall(
+			'GET',
+			`/room?filter=${filter}`
+		);
+		return rooms;
+	}
+
+	async fetchJoinedRooms(): Promise<BlahRoomInfo[]> {
+		if (!this.keypair) return [];
+		return await this.fetchRoomList('joined');
+	}
+
+	async discoverRooms(): Promise<BlahRoomInfo[]> {
+		return await this.fetchRoomList('public');
+	}
+
 	async sendMessage(room: string, message: BlahRichText): Promise<void> {
 		if (!this.keypair) throw new Error('Must send message with a keypair');
 		const payload: BlahMessage = { room, rich_text: message, typ: 'chat' };
@@ -153,7 +170,7 @@ export class BlahChatServerConnection {
 	}
 
 	connect() {
-		if (!this.webSocket) this.webSocket = this.createWebSocket();
+		if (!this.webSocket && this.keypair) this.webSocket = this.createWebSocket();
 	}
 
 	disconnect() {
@@ -174,8 +191,6 @@ export class BlahChatServerConnection {
 		roomId: string,
 		onNewMessage: (message: BlahSignedPayload<BlahMessage>) => void
 	): { unsubscribe: () => void } {
-		if (!this.webSocket) throw new Error('Must connect to WebSocket before subscribing to rooms');
-
 		const listeners = this.roomListeners.get(roomId) ?? new Set();
 		listeners.add(onNewMessage);
 		this.roomListeners.set(roomId, listeners);
@@ -194,9 +209,6 @@ export class BlahChatServerConnection {
 	subscribe(onNewMessage: (message: BlahSignedPayload<BlahMessage>) => void): {
 		unsubscribe: () => void;
 	} {
-		if (!this.webSocket)
-			throw new Error('Must connect to WebSocket before subscribing to messages');
-
 		this.serverListeners.add(onNewMessage);
 
 		return {

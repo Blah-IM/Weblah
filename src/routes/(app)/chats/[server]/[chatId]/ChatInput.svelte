@@ -28,7 +28,7 @@
 </script>
 
 <form
-	class="flex items-end gap-2 border-t border-ss-secondary bg-sb-primary p-2 shadow-sm"
+	class="flex w-full items-end gap-2 border-t border-ss-secondary bg-sb-primary p-2 shadow-sm"
 	bind:this={form}
 	on:submit|preventDefault={submit}
 >

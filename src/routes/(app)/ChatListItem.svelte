@@ -7,12 +7,21 @@
 	import { blahRichTextToPlainText } from '$lib/richText';
 
 	export let chat: Chat;
+
+	let urlSafeEndpoint: string;
+	$: {
+		const url = new URL(chat.server);
+		urlSafeEndpoint = encodeURIComponent(url.hostname + url.pathname);
+	}
 </script>
 
 <li
 	class="relative after:absolute after:bottom-0 after:end-0 after:start-14 after:border-t-[0.5px] after:border-ss-secondary"
 >
-	<a href="/chats/{chat.id}" class="flex h-20 cursor-default items-center gap-2 px-2">
+	<a
+		href="/chats/{urlSafeEndpoint}/{chat.id}"
+		class="flex h-20 cursor-default items-center gap-2 px-2"
+	>
 		<div class="size-10">
 			<AvatarBeam size={40} name={chat.name} />
 		</div>
