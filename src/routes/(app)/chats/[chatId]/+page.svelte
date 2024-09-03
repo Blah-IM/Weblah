@@ -33,14 +33,25 @@
 		return server;
 	}
 
-	async function loadChat(server: BlahChatServerConnection) {
-		const { room, messages: blahMessages } = await server.fetchRoom(roomId);
+	async function loadChatInfo(server: BlahChatServerConnection) {
+		const room = await server.fetchRoomInfo(roomId);
 		chat = {
 			id: roomId,
 			name: room.title,
 			type: 'group'
 		};
-		messages = [...blahMessages.map(messageFromBlah), ...messages];
+	}
+
+	async function loadChatHistory(server: BlahChatServerConnection) {
+		const history = await server.fetchRoomHistory(roomId);
+		messages = [
+			...history.map(messageFromBlah).toSorted((a, b) => a.date.getTime() - b.date.getTime()),
+			...messages
+		];
+	}
+
+	async function loadChat(server: BlahChatServerConnection) {
+		return await Promise.allSettled([loadChatInfo(server), loadChatHistory(server)]);
 	}
 
 	$: if (browser) initConnection($currentKeyPair).then((server) => loadChat(server));

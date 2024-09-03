@@ -91,12 +91,17 @@ export class BlahChatServerConnection {
 		await this.apiCall('POST', `/room/${room}/item`, payload);
 	}
 
-	async fetchRoom(
-		roomId: string
-	): Promise<{ room: BlahRoomInfo; messages: BlahSignedPayload<BlahMessage>[] }> {
-		const [room, messages]: [BlahRoomInfo, [number, BlahSignedPayload<BlahMessage>][]] =
-			await this.apiCall('GET', `/room/${roomId}/item`);
-		return { room, messages: messages.toSorted(([a], [b]) => a - b).map(([, message]) => message) };
+	async fetchRoomInfo(roomId: string): Promise<BlahRoomInfo> {
+		const room: BlahRoomInfo = await this.apiCall('GET', `/room/${roomId}`);
+		return room;
+	}
+
+	async fetchRoomHistory(roomId: string): Promise<BlahSignedPayload<BlahMessage>[]> {
+		const { items }: { items: BlahSignedPayload<BlahMessage>[] } = await this.apiCall(
+			'GET',
+			`/room/${roomId}/item`
+		);
+		return items;
 	}
 
 	private createEventSource(roomId: string): EventSource {
