@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { formatMessageDate, formatUnreadCount } from '$lib/formatters';
 	import { AvatarBeam } from 'svelte-boring-avatars';
 
-	export let chat: {
-		id: string;
-		name: string;
-		lastMessage: { sender: { id: string; name: string }; content: string; date: Date };
-		unreadCount?: number;
-	};
+	import { formatMessageDate, formatUnreadCount } from '$lib/formatters';
+	import type { Chat } from '$lib/types';
+	import { currentKeyPair } from '$lib/keystore';
+	import { blahRichTextToPlainText } from '$lib/richText';
+
+	export let chat: Chat;
 </script>
 
 <li
@@ -20,20 +19,28 @@
 		<div class="relative min-w-0 flex-1">
 			<div class="flex items-center gap-1">
 				<h3 class="flex-1 truncate text-sm font-semibold">{chat.name}</h3>
-				<time
-					class="truncate text-xs text-sf-tertiary"
-					datetime={chat.lastMessage.date.toISOString()}
-					title={formatMessageDate(chat.lastMessage.date, true)}
-				>
-					{formatMessageDate(chat.lastMessage.date)}
-				</time>
+				{#if chat.lastMessage}
+					<time
+						class="truncate text-xs text-sf-tertiary"
+						datetime={chat.lastMessage.date.toISOString()}
+						title={formatMessageDate(chat.lastMessage.date, true)}
+					>
+						{formatMessageDate(chat.lastMessage.date)}
+					</time>
+				{/if}
 			</div>
 			<div class="flex items-end gap-1">
 				<p class="line-clamp-2 h-[2.5em] flex-1 text-sm leading-tight text-sf-secondary">
-					{#if chat.id !== chat.lastMessage.sender.id}
-						<span class="text-sf-primary">{chat.lastMessage.sender.name}: </span>
+					{#if chat.lastMessage}
+						{#if chat.id !== chat.lastMessage.sender.id}
+							<span class="text-sf-primary">
+								{chat.lastMessage.sender.id === $currentKeyPair.id
+									? 'You'
+									: chat.lastMessage.sender.name}:
+							</span>
+						{/if}
+						{blahRichTextToPlainText(chat.lastMessage.content)}
 					{/if}
-					{chat.lastMessage.content}
 				</p>
 				{#if chat.unreadCount}
 					<span

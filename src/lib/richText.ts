@@ -45,7 +45,7 @@ function deltaAttributesToBlahRichTextSpanAttributes(
 	return isObjectEmpty(blahRichTextSpanAttributes) ? null : blahRichTextSpanAttributes;
 }
 
-export function deltaToBlahRichText(delta: Delta, trim?: boolean = true): BlahRichText {
+export function deltaToBlahRichText(delta: Delta, trim: boolean = true): BlahRichText {
 	const spans: BlahRichText = [];
 
 	let lastText = '';
@@ -96,4 +96,8 @@ export function deltaToBlahRichText(delta: Delta, trim?: boolean = true): BlahRi
 	}
 
 	return spans;
+}
+
+export function blahRichTextToPlainText(richText: BlahRichText): string {
+	return richText.map((span) => (typeof span === 'string' ? span : span[0])).join('');
 }
