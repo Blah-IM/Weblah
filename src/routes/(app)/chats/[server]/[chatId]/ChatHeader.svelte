@@ -4,7 +4,7 @@
 	import type { Chat } from '$lib/types';
 	import { AvatarBeam } from 'svelte-boring-avatars';
 
-	export let chat: Chat;
+	export let info: Chat;
 	export let outsideUnreadCount = 0;
 </script>
 
@@ -28,10 +28,10 @@
 		<span class="sr-only">Back</span>
 	</Button>
 	<div class="flex flex-1 flex-col justify-center text-center sm:order-2 sm:text-start">
-		<h3 class="truncate text-sm font-semibold">{chat.name}</h3>
+		<h3 class="truncate text-sm font-semibold">{info.name}</h3>
 	</div>
 	<div class="sm:order-1">
-		<AvatarBeam size={30} name={chat.name} />
+		<AvatarBeam size={30} name={info.id} />
 	</div>
 
 	<a class="absolute inset-y-0 start-0 hidden w-2 cursor-default sm:block" href="/">

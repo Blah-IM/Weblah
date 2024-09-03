@@ -1,5 +1,7 @@
 import { version } from '$app/environment';
 import type { BlahRichText } from '$lib/richText';
+import { messageFromBlah, type Chat, type Message } from '$lib/types';
+import { readable, type Readable } from 'svelte/store';
 import type { BlahKeyPair, BlahSignedPayload } from '../crypto';
 import type { BlahAuth, BlahMessage, BlahRoomInfo, BlahUserJoinMessage } from '../structures';
 import { BlahError } from './error';
@@ -11,14 +13,14 @@ export class BlahChatServerConnection {
 	private static commonHeaders = { 'x-blah-client': `Weblah/${version}` };
 
 	private endpoint: string;
-	private keypair?: BlahKeyPair;
+	private keypair: BlahKeyPair | null;
 
 	private webSocket: WebSocket | null = null;
 	private messageListeners: Map<string, Set<(message: BlahSignedPayload<BlahMessage>) => void>> =
 		new Map();
 	private webSocketRetryTimeout: number | null = null;
 
-	constructor(endpoint: string, keypair?: BlahKeyPair) {
+	constructor(endpoint: string, keypair: BlahKeyPair | null = null) {
 		this.endpoint = endpoint;
 		this.keypair = keypair;
 	}
@@ -147,11 +149,29 @@ export class BlahChatServerConnection {
 		return socket;
 	}
 
+	connect() {
+		if (!this.webSocket) this.webSocket = this.createWebSocket();
+	}
+
+	disconnect() {
+		if (this.webSocketRetryTimeout) clearTimeout(this.webSocketRetryTimeout);
+		this.webSocket?.close();
+		this.webSocket = null;
+	}
+
+	changeKeyPair(keypair: BlahKeyPair | null) {
+		this.keypair = keypair;
+		if (this.webSocket) {
+			this.disconnect();
+			this.connect();
+		}
+	}
+
 	subscribeRoom(
 		roomId: string,
 		onNewMessage: (message: BlahSignedPayload<BlahMessage>) => void
 	): { unsubscribe: () => void } {
-		if (!this.webSocket) this.webSocket = this.createWebSocket();
+		if (!this.webSocket) throw new Error('Must connect to WebSocket before subscribing to rooms');
 
 		const listeners = this.messageListeners.get(roomId) ?? new Set();
 		listeners.add(onNewMessage);
@@ -164,12 +184,43 @@ export class BlahChatServerConnection {
 				if (listeners.size === 0) {
 					this.messageListeners.delete(roomId);
 				}
-				if (this.messageListeners.size === 0) {
-					if (this.webSocketRetryTimeout) clearTimeout(this.webSocketRetryTimeout);
-					this.webSocket?.close();
-					this.webSocket = null;
-				}
 			}
 		};
+	}
+
+	chat(chatId: string): {
+		info: Readable<Chat>;
+		messages: Readable<Message[]>;
+		sendMessage: (brt: BlahRichText) => Promise<void>;
+	} {
+		const info = readable<Chat>(
+			{ server: this.endpoint, id: chatId, name: '', type: 'group' },
+			(set) => {
+				this.fetchRoomInfo(chatId).then((room) => {
+					set({ server: this.endpoint, id: chatId, name: room.title, type: 'group' });
+				});
+			}
+		);
+
+		const messages = readable<Message[]>([], (set, update) => {
+			this.fetchRoomHistory(chatId).then((history) =>
+				update((messages) => [
+					...history.map(messageFromBlah).toSorted((a, b) => a.date.getTime() - b.date.getTime()),
+					...messages
+				])
+			);
+
+			const { unsubscribe } = this.subscribeRoom(chatId, (message) => {
+				update((messages) => [...messages, messageFromBlah(message)]);
+			});
+
+			return unsubscribe;
+		});
+
+		const sendMessage = async (brt: BlahRichText) => {
+			await this.sendMessage(chatId, brt);
+		};
+
+		return { info, messages, sendMessage };
 	}
 }

@@ -1,19 +1,16 @@
 <script lang="ts">
-	import type { BlahChatServerConnection } from '$lib/blah/connection/chatServer';
-	import { BlahError } from '$lib/blah/connection/error';
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
-	import { deltaToBlahRichText } from '$lib/richText';
+	import { deltaToBlahRichText, type BlahRichText } from '$lib/richText';
+	import { createEventDispatcher } from 'svelte';
 	import type { Delta, Editor } from 'typewriter-editor';
-
-	export let roomId: string;
-	export let server: BlahChatServerConnection | undefined;
 
 	let editor: Editor | undefined;
 	let delta: Delta;
 	let plainText: string = '';
 	let form: HTMLFormElement | null = null;
-	let sendDisabled = false;
+
+	const dispatch = createEventDispatcher<{ sendMessage: BlahRichText }>();
 
 	function onKeyboardSubmit() {
 		editor?.select(null);
@@ -21,27 +18,13 @@
 	}
 
 	async function submit() {
-		if (!server || plainText.trim() === '') return;
+		if (plainText.trim() === '') return;
 
 		const brt = deltaToBlahRichText(delta);
-		sendDisabled = true;
-		try {
-			await server.sendMessage(roomId, brt);
-		} catch (e) {
-			console.log(e);
-			if (e instanceof BlahError && e.statusCode === 403) {
-				// TODO: Actual error handling
-				await server.joinRoom(roomId);
-				await server.sendMessage(roomId, brt);
-			} else {
-				throw e;
-			}
-		}
-		sendDisabled = false;
+		dispatch('sendMessage', brt);
+
 		plainText = '';
 	}
-
-	$: sendDisabled = !server;
 </script>
 
 <form
@@ -75,7 +58,7 @@
 		keyboardSubmitMethod="enter"
 		on:keyboardSubmit={onKeyboardSubmit}
 	/>
-	<Button class="p-1.5" variant="primary" type="submit" disabled={sendDisabled}>
+	<Button class="p-1.5" variant="primary" type="submit">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
