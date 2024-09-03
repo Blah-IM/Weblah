@@ -5,6 +5,8 @@
 	import type { Chat } from '$lib/types';
 	import { currentKeyPair } from '$lib/keystore';
 	import { blahRichTextToPlainText } from '$lib/richText';
+	import { page } from '$app/stores';
+	import { tw } from '$lib/tw';
 
 	export let chat: Chat;
 
@@ -13,10 +15,15 @@
 		const url = new URL(chat.server);
 		urlSafeEndpoint = encodeURIComponent(url.hostname + url.pathname);
 	}
+
+	$: isSelected = $page.params.chatId === chat.id;
 </script>
 
 <li
-	class="relative after:absolute after:bottom-0 after:end-0 after:start-14 after:border-t-[0.5px] after:border-ss-secondary"
+	class={tw(
+		'relative after:absolute after:bottom-0 after:end-0 after:start-14 after:border-t-[0.5px] after:border-ss-secondary',
+		isSelected && 'bg-accent-100 shadow-inner dark:bg-accent-950'
+	)}
 >
 	<a
 		href="/chats/{urlSafeEndpoint}/{chat.id}"
