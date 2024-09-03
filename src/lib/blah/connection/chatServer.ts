@@ -1,7 +1,5 @@
 import { version } from '$app/environment';
 import type { BlahRichText } from '$lib/richText';
-import { messageFromBlah, type Chat, type Message } from '$lib/types';
-import { readable, type Readable } from 'svelte/store';
 import type { BlahKeyPair, BlahSignedPayload } from '../crypto';
 import type { BlahAuth, BlahMessage, BlahRoomInfo, BlahUserJoinMessage } from '../structures';
 import { BlahError } from './error';
@@ -12,16 +10,21 @@ const RECONNECT_MAX_TRIES = 5;
 export class BlahChatServerConnection {
 	private static commonHeaders = { 'x-blah-client': `Weblah/${version}` };
 
-	private endpoint: string;
+	private endpoint_: string;
 	private keypair: BlahKeyPair | null;
 
+	get endpoint() {
+		return this.endpoint_;
+	}
+
 	private webSocket: WebSocket | null = null;
-	private messageListeners: Map<string, Set<(message: BlahSignedPayload<BlahMessage>) => void>> =
+	private roomListeners: Map<string, Set<(message: BlahSignedPayload<BlahMessage>) => void>> =
 		new Map();
+	private serverListeners: Set<(message: BlahSignedPayload<BlahMessage>) => void> = new Set();
 	private webSocketRetryTimeout: number | null = null;
 
 	constructor(endpoint: string, keypair: BlahKeyPair | null = null) {
-		this.endpoint = endpoint;
+		this.endpoint_ = endpoint;
 		this.keypair = keypair;
 	}
 
@@ -65,14 +68,14 @@ export class BlahChatServerConnection {
 		let response: Response;
 		if (method === 'GET') {
 			if (this.keypair) {
-				response = await this.fetchWithAuthHeader(`${this.endpoint}${path}`);
+				response = await this.fetchWithAuthHeader(`${this.endpoint_}${path}`);
 			} else {
-				response = await fetch(`${this.endpoint}${path}`, {
+				response = await fetch(`${this.endpoint_}${path}`, {
 					headers: BlahChatServerConnection.commonHeaders
 				});
 			}
 		} else {
-			response = await this.fetchWithSignedPayload(`${this.endpoint}${path}`, payload, { method });
+			response = await this.fetchWithSignedPayload(`${this.endpoint_}${path}`, payload, { method });
 		}
 
 		if (!response.ok) throw await BlahError.fromResponse(response);
@@ -112,7 +115,7 @@ export class BlahChatServerConnection {
 	}
 
 	private createWebSocket(remainingTries: number = RECONNECT_MAX_TRIES - 1): WebSocket {
-		const socket = new WebSocket(`${this.endpoint}/ws`);
+		const socket = new WebSocket(`${this.endpoint_}/ws`);
 		const onSocketClose = (e: Event) => {
 			console.error('WebSocket error or closed:', e);
 			this.webSocket?.close();
@@ -139,7 +142,7 @@ export class BlahChatServerConnection {
 
 			if ('chat' in frameJson) {
 				const message = frameJson.chat;
-				const listeners = this.messageListeners.get(message.signee.payload.room);
+				const listeners = this.roomListeners.get(message.signee.payload.room);
 				if (listeners) for (const listener of listeners) listener(message);
 			} else {
 				console.log('Unknown WebSocket frame:', frameJson);
@@ -173,54 +176,33 @@ export class BlahChatServerConnection {
 	): { unsubscribe: () => void } {
 		if (!this.webSocket) throw new Error('Must connect to WebSocket before subscribing to rooms');
 
-		const listeners = this.messageListeners.get(roomId) ?? new Set();
+		const listeners = this.roomListeners.get(roomId) ?? new Set();
 		listeners.add(onNewMessage);
-		this.messageListeners.set(roomId, listeners);
+		this.roomListeners.set(roomId, listeners);
 
 		return {
 			unsubscribe: () => {
-				const listeners = this.messageListeners.get(roomId) ?? new Set();
+				const listeners = this.roomListeners.get(roomId) ?? new Set();
 				listeners.delete(onNewMessage);
 				if (listeners.size === 0) {
-					this.messageListeners.delete(roomId);
+					this.roomListeners.delete(roomId);
 				}
 			}
 		};
 	}
 
-	chat(chatId: string): {
-		info: Readable<Chat>;
-		messages: Readable<Message[]>;
-		sendMessage: (brt: BlahRichText) => Promise<void>;
+	subscribe(onNewMessage: (message: BlahSignedPayload<BlahMessage>) => void): {
+		unsubscribe: () => void;
 	} {
-		const info = readable<Chat>(
-			{ server: this.endpoint, id: chatId, name: '', type: 'group' },
-			(set) => {
-				this.fetchRoomInfo(chatId).then((room) => {
-					set({ server: this.endpoint, id: chatId, name: room.title, type: 'group' });
-				});
+		if (!this.webSocket)
+			throw new Error('Must connect to WebSocket before subscribing to messages');
+
+		this.serverListeners.add(onNewMessage);
+
+		return {
+			unsubscribe: () => {
+				this.serverListeners.delete(onNewMessage);
 			}
-		);
-
-		const messages = readable<Message[]>([], (set, update) => {
-			this.fetchRoomHistory(chatId).then((history) =>
-				update((messages) => [
-					...history.map(messageFromBlah).toSorted((a, b) => a.date.getTime() - b.date.getTime()),
-					...messages
-				])
-			);
-
-			const { unsubscribe } = this.subscribeRoom(chatId, (message) => {
-				update((messages) => [...messages, messageFromBlah(message)]);
-			});
-
-			return unsubscribe;
-		});
-
-		const sendMessage = async (brt: BlahRichText) => {
-			await this.sendMessage(chatId, brt);
 		};
-
-		return { info, messages, sendMessage };
 	}
 }
