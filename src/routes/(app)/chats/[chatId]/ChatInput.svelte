@@ -4,27 +4,24 @@
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
 	import { deltaToBlahRichText } from '$lib/richText';
-	import type { Delta } from 'typewriter-editor';
+	import type { Delta, Editor } from 'typewriter-editor';
 
 	export let roomId: string;
 	export let server: BlahChatServerConnection | undefined;
 
+	let editor: Editor | undefined;
 	let delta: Delta;
 	let plainText: string = '';
 	let form: HTMLFormElement | null = null;
 	let sendDisabled = false;
 
-	function onInputKeydown(event: KeyboardEvent) {
-		console.log(event.key, event.shiftKey, event.isComposing, plainText);
-		if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
-			event.preventDefault();
-			form?.requestSubmit();
-		}
+	function onKeyboardSubmit() {
+		editor?.select(null);
+		form?.requestSubmit();
 	}
 
 	async function submit() {
 		if (!server || plainText.trim() === '') return;
-		console.log('submit');
 
 		const brt = deltaToBlahRichText(delta);
 		sendDisabled = true;
@@ -44,7 +41,7 @@
 		plainText = '';
 	}
 
-	$: sendDisabled = !!server;
+	$: sendDisabled = !server;
 </script>
 
 <form
@@ -70,11 +67,13 @@
 		<span class="sr-only">Attach</span>
 	</Button>
 	<RichTextInput
+		bind:editor
 		bind:delta
 		bind:plainText
 		placeholder="Message"
 		class="max-h-40 flex-1"
-		on:keydown={onInputKeydown}
+		keyboardSubmitMethod="enter"
+		on:keyboardSubmit={onKeyboardSubmit}
 	/>
 	<Button class="p-1.5" variant="primary" type="submit" disabled={sendDisabled}>
 		<svg

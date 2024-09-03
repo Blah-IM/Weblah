@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import type { Delta } from 'typewriter-editor';
+	import type { Delta, Editor } from 'typewriter-editor';
 	import InputFrame from '$lib/components/InputFrame.svelte';
 	import { tw } from '$lib/tw';
 
 	export let delta: Delta | null = null;
 	export let plainText: string | undefined = undefined;
+	export let keyboardSubmitMethod: 'enter' | 'shiftEnter' | undefined = undefined;
 	export let placeholder: string = '';
+	export let editor: Editor | undefined;
 
 	let className = '';
 	export { className as class };
@@ -24,7 +26,15 @@
 			<p>{placeholder}</p>
 		</div>
 	{:then Input}
-		<svelte:component this={Input} bind:delta bind:plainText {placeholder} on:keydown>
+		<svelte:component
+			this={Input}
+			bind:delta
+			bind:plainText
+			{placeholder}
+			bind:editor
+			{keyboardSubmitMethod}
+			on:keyboardSubmit
+		>
 			<slot />
 		</svelte:component>
 	{/await}

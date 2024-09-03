@@ -9,7 +9,7 @@
 </script>
 
 <div
-	class="relative box-border flex min-h-[calc(3rem+1px)] w-full items-center gap-2 border-b border-ss-secondary bg-sb-primary p-2 shadow-sm"
+	class="relative z-10 box-border flex min-h-[calc(3rem+1px)] w-full items-center gap-2 border-b border-ss-secondary bg-sb-primary p-2 shadow-sm"
 >
 	<Button href="/" class="rounded-full sm:hidden">
 		<svg

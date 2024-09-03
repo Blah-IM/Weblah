@@ -1,33 +1,49 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import { Delta, Editor, asRoot, h } from 'typewriter-editor';
+	import { keyboardSubmit } from './keyboardSubmitModule';
 
 	export let delta: Delta = new Delta();
 	export let plainText: string | undefined = undefined;
 	export let placeholder: string = '';
+	export let keyboardSubmitMethod: 'enter' | 'shiftEnter' | undefined = undefined;
 
-	const editor = new Editor();
-	editor.typeset.formats.add({
-		name: 'underline',
-		selector: 'span[data-weblah-brt=underline]',
-		styleSelector: '[style*="text-decoration:underline"], [style*="text-decoration: underline"]',
-		commands: (editor) => () => editor.toggleTextFormat({ underline: true }),
-		shortcuts: 'Mod+U',
-		render: (attributes, children) => h('span', { 'data-weblah-brt': 'underline' }, children)
-	});
-	editor.typeset.formats.add({
-		name: 'strikethrough',
-		selector: 's',
-		styleSelector:
-			'[style*="text-decoration:line-through"], [style*="text-decoration: line-through"]',
-		commands: (editor) => () => editor.toggleTextFormat({ strikethrough: true }),
-		shortcuts: 'Mod+Shift+X',
-		render: (attributes, children) => h('s', null, children)
-	});
+	const dispatch = createEventDispatcher<{
+		keyboardSubmit: void;
+	}>();
 
-	editor.on('change', () => {
-		delta = editor.getDelta();
-		if (typeof plainText === 'string') plainText = editor.getText();
-	});
+	let editor: Editor;
+
+	function initEditor() {
+		const modules = keyboardSubmitMethod
+			? { keyboardSubmit: keyboardSubmit(() => dispatch('keyboardSubmit'), keyboardSubmitMethod) }
+			: undefined;
+		editor = new Editor({ modules });
+		editor.typeset.formats.add({
+			name: 'underline',
+			selector: 'span[data-weblah-brt=underline]',
+			styleSelector: '[style*="text-decoration:underline"], [style*="text-decoration: underline"]',
+			commands: (editor) => () => editor.toggleTextFormat({ underline: true }),
+			shortcuts: 'Mod+U',
+			render: (attributes, children) => h('span', { 'data-weblah-brt': 'underline' }, children)
+		});
+		editor.typeset.formats.add({
+			name: 'strikethrough',
+			selector: 's',
+			styleSelector:
+				'[style*="text-decoration:line-through"], [style*="text-decoration: line-through"]',
+			commands: (editor) => () => editor.toggleTextFormat({ strikethrough: true }),
+			shortcuts: 'Mod+Shift+X',
+			render: (attributes, children) => h('s', null, children)
+		});
+
+		editor.on('change', () => {
+			delta = editor.getDelta();
+			if (typeof plainText === 'string') plainText = editor.getText();
+		});
+	}
+
+	$: if (keyboardSubmitMethod || typeof keyboardSubmitMethod === 'undefined') initEditor();
 
 	$: editor.setDelta(delta ?? new Delta());
 	$: if (typeof plainText === 'string' && plainText !== editor.getText()) editor.setText(plainText);
@@ -40,7 +56,6 @@
 		? 'true'
 		: undefined}
 	data-weblah-placeholder={placeholder}
-	on:keydown
 	role="textbox"
 	tabindex="0"
 >
