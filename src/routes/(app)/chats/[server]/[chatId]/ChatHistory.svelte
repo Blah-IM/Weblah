@@ -28,7 +28,7 @@
 
 	<div>
 		{#if messageSection.date}
-			<div class="py-0.5 text-center">
+			<div class="pb-1.5 text-center">
 				<ServiceMessage>{formatMessageSectionDate(messageSection.date)}</ServiceMessage>
 			</div>
 		{/if}
