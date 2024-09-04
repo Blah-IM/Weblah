@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { VList } from 'virtua/svelte';
 
-	import type { Message } from '$lib/types';
 	import ChatMessage from './ChatMessage.svelte';
 	import { tick } from 'svelte';
 	import type { MessageSection } from '$lib/chat';
 	import { tw } from '$lib/tw';
 	import { AvatarBeam } from 'svelte-boring-avatars';
 	import ServiceMessage from '$lib/components/ServiceMessage.svelte';
-	import { formatMessageDate, formatMessageSectionDate } from '$lib/formatters';
+	import { formatMessageSectionDate } from '$lib/formatters';
 
 	export let sectionedMessages: MessageSection[] = [];
 	export let mySenderId: string;
