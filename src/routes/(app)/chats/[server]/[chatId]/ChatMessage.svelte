@@ -2,16 +2,13 @@
 	import RichTextRenderer from '$lib/components/RichTextRenderer.svelte';
 	import { tw } from '$lib/tw';
 	import type { Message } from '$lib/types';
-	import { AvatarBeam } from 'svelte-boring-avatars';
 
 	export let message: Message;
+	export let showBubbleTail: boolean = true;
 	export let isMyself: boolean;
 </script>
 
-<div class={tw('mb-2 flex items-end gap-2 px-2', isMyself && 'flex-row-reverse')}>
-	<div>
-		<AvatarBeam size={30} name={message.sender.name} />
-	</div>
+<div class={tw('mb-1.5 flex items-end gap-2 px-2', isMyself && 'flex-row-reverse')}>
 	<div
 		class={tw(
 			'relative flex-1',
@@ -24,16 +21,18 @@
 		<div
 			class={tw(
 				`relative inline-block max-w-[85%] rounded-2xl bg-[--weblah-chat-bubble-bg] shadow-sm ring-1 ring-[--weblah-chat-bubble-stroke]`,
-				// ::before: Fill of chat bubble tail
-				'before:absolute before:-bottom-[1px] before:box-content before:h-6 before:w-5 before:border-[--weblah-chat-bubble-bg] before:text-[--weblah-chat-bubble-stroke]',
-				isMyself
-					? 'before:-end-5 before:rounded-es-[16px_12px] before:border-s-[10px] before:drop-shadow-[1px_0]'
-					: `before:-start-5 before:rounded-ee-[16px_12px] before:border-e-[10px] before:drop-shadow-[-1px_0]`,
-				// ::after: Stroke of chat bubble tail
-				'after:absolute after:-bottom-[1px] after:-z-10 after:box-content after:h-6 after:w-5 after:text-[--weblah-chat-bubble-stroke]',
-				isMyself
-					? 'after:-end-5 after:rounded-es-[16px_12px] after:border-s-[10px] after:drop-shadow-[0_1px]'
-					: `after:-start-5 after:rounded-ee-[16px_12px] after:border-e-[10px] after:drop-shadow-[0_1px]`,
+				showBubbleTail && [
+					// ::before: Fill of chat bubble tail
+					'before:absolute before:-bottom-[1px] before:box-content before:h-6 before:w-5 before:border-[--weblah-chat-bubble-bg] before:text-[--weblah-chat-bubble-stroke]',
+					isMyself
+						? 'before:-end-5 before:rounded-es-[16px_12px] before:border-s-[10px] before:drop-shadow-[1px_0]'
+						: `before:-start-5 before:rounded-ee-[16px_12px] before:border-e-[10px] before:drop-shadow-[-1px_0]`,
+					// ::after: Stroke of chat bubble tail
+					'after:absolute after:-bottom-[1px] after:-z-10 after:box-content after:h-6 after:w-5 after:text-[--weblah-chat-bubble-stroke]',
+					isMyself
+						? 'after:-end-5 after:rounded-es-[16px_12px] after:border-s-[10px] after:drop-shadow-[0_1px]'
+						: `after:-start-5 after:rounded-ee-[16px_12px] after:border-e-[10px] after:drop-shadow-[0_1px]`
+				],
 				'sm:max-w-[70%] lg:max-w-[50%]',
 				isMyself && 'text-start'
 			)}

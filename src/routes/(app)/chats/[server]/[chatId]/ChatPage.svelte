@@ -9,9 +9,10 @@
 	import ChatHistory from './ChatHistory.svelte';
 	import ChatInput from './ChatInput.svelte';
 	import type { BlahRichText } from '$lib/richText';
+	import type { MessageSection } from '$lib/chat';
 
 	export let info: Readable<Chat>;
-	export let messages: Readable<Message[]>;
+	export let sectionedMessages: Readable<MessageSection[]>;
 
 	interface $$Events {
 		sendMessage: CustomEvent<BlahRichText>;
@@ -20,6 +21,6 @@
 
 <ChatHeader info={$info} outsideUnreadCount={263723} />
 <BgPattern class="w-full flex-1" pattern="charlieBrown">
-	<ChatHistory messages={$messages} mySenderId={$currentKeyPair?.id} />
+	<ChatHistory sectionedMessages={$sectionedMessages} mySenderId={$currentKeyPair?.id} />
 </BgPattern>
 <ChatInput on:sendMessage />

@@ -31,7 +31,7 @@
 		<h3 class="truncate text-sm font-semibold">{info.name}</h3>
 	</div>
 	<div class="sm:order-1">
-		<AvatarBeam size={30} name={info.id} />
+		<AvatarBeam size={32} name={info.id} />
 	</div>
 
 	<a class="absolute inset-y-0 start-0 hidden w-2 cursor-default sm:block" href="/">

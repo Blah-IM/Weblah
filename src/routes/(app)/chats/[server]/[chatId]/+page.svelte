@@ -27,8 +27,8 @@
 
 <div class="flex h-full w-full flex-col items-center justify-center">
 	{#if server}
-		{@const { info, messages, sendMessage } = useChat(server, roomId)}
-		<ChatPage {info} {messages} on:sendMessage={(e) => sendMessage(e.detail)} />
+		{@const { info, sectionedMessages, sendMessage } = useChat(server, roomId)}
+		<ChatPage {info} {sectionedMessages} on:sendMessage={(e) => sendMessage(e.detail)} />
 	{:else}
 		<ServiceMessage>
 			To view this chat, you need to connect to chat server
