@@ -29,7 +29,9 @@
 	<div>
 		{#if messageSection.date}
 			<div class="pb-1.5 text-center">
-				<ServiceMessage>{formatMessageSectionDate(messageSection.date)}</ServiceMessage>
+				<ServiceMessage class="text-xs">
+					{formatMessageSectionDate(messageSection.date)}
+				</ServiceMessage>
 			</div>
 		{/if}
 		<div class={tw('flex w-full items-end px-2', isMyself && 'flex-row-reverse')}>
