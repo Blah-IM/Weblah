@@ -26,6 +26,7 @@
 	)}
 >
 	<a
+		tabindex="-1"
 		href="/chats/{urlSafeEndpoint}/{chat.id}"
 		class="flex h-20 cursor-default items-center gap-2 px-2"
 	>

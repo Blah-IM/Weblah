@@ -4,14 +4,13 @@
 	import { Icon, MagnifyingGlass, PencilSquare, XCircle } from 'svelte-hero-icons';
 	import IdentityMenu from './IdentityMenu.svelte';
 	import { tw } from '$lib/tw';
-	import { tick } from 'svelte';
 
 	export let searchQuery: string = '';
 	export let isSearchFocused: boolean;
 
 	let inputElement: HTMLInputElement;
 
-	function onTapX() {
+	function onTapClear() {
 		searchQuery = '';
 		inputElement.blur();
 	}
@@ -28,17 +27,21 @@
 			bind:value={searchQuery}
 			bind:this={inputElement}
 			on:focus={() => (isSearchFocused = true)}
-			on:blur={async () => {
-				await tick();
+			on:blur={(e) => {
+				// If the related target is an anchor element, trigger the click as the user is trying to navigate
+				if (e.relatedTarget instanceof HTMLAnchorElement) {
+					console.log('relatedTarget is an anchor element');
+					e.relatedTarget.click();
+				}
 				isSearchFocused = false;
 			}}
 		/>
 		<button
 			class={tw(
-				'size-4 cursor-default text-slate-300 opacity-0 transition-opacity dark:text-slate-500',
-				isSearchFocused && 'opacity-100'
+				'pointer-events-none size-4 cursor-default text-slate-300 opacity-0 transition-opacity dark:text-slate-500',
+				isSearchFocused && 'pointer-events-auto opacity-100'
 			)}
-			on:click={onTapX}
+			on:click={onTapClear}
 		>
 			<Icon src={XCircle} mini />
 			<span class="sr-only">Clear</span>
