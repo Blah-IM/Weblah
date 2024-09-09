@@ -4,6 +4,9 @@
 	import { keyStore, currentKeyIndex, currentKeyPair } from '$lib/keystore';
 	import { BlahKeyPair, generateName } from '$lib/blah/crypto';
 
+	let className: string = '';
+	export { className as class };
+
 	let currentKeyId: string | undefined;
 	let currentKeyName: string | null;
 	$: {
@@ -24,10 +27,10 @@
 </script>
 
 <DropdownMenu.Root closeOnItemClick={false}>
-	<DropdownMenu.Trigger>
+	<DropdownMenu.Trigger class={className}>
 		{#if currentKeyId}
 			{#key currentKeyId}
-				<AvatarBeam size={30} name={currentKeyId} />
+				<AvatarBeam size={32} name={currentKeyId} />
 			{/key}
 			<span class="sr-only">Using identity {currentKeyName}</span>
 		{:else}

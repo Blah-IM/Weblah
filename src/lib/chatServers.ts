@@ -5,6 +5,7 @@ import { BlahKeyPair, type EncodedBlahKeyPair } from './blah/crypto';
 import { currentKeyPair } from './keystore';
 import { ChatListManager } from './chatList';
 import { browser } from '$app/environment';
+import { GlobalSearchManager } from './globalSearch';
 
 export const chatServers = persisted<string[]>('weblah-chat-servers', ['https://blah.oxa.li/api']);
 
@@ -12,6 +13,7 @@ class ChatServerConnectionPool {
 	private connections: Map<string, BlahChatServerConnection> = new Map();
 	private keypair: BlahKeyPair | null = null;
 	chatList: ChatListManager = new ChatListManager();
+	searchManager: GlobalSearchManager = new GlobalSearchManager(this.connections);
 
 	constructor() {
 		if (browser) {

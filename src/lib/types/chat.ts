@@ -14,7 +14,7 @@ export type Chat = {
 export function chatFromBlah(room: BlahRoomInfo, serverEndpoint: string): Chat {
 	return {
 		server: serverEndpoint,
-		id: room.ruuid,
+		id: room.rid,
 		name: room.title,
 		type: 'group',
 		lastMessage: room.last_chat ? messageFromBlah(room.last_chat) : undefined

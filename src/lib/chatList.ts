@@ -13,8 +13,8 @@ export class ChatListManager {
 	private sortChats(chatList: Chat[]) {
 		chatList.sort(
 			(a, b) =>
-				(b.lastMessage?.date ?? new Date(1970, 0, 1)).getTime() ??
-				-(a.lastMessage?.date ?? new Date(1970, 0, 1)).getTime()
+				(b.lastMessage?.date ?? new Date(0)).getTime() ??
+				-(a.lastMessage?.date ?? new Date(0)).getTime()
 		);
 	}
 
@@ -23,7 +23,7 @@ export class ChatListManager {
 			for (const chat of chats) {
 				const newChat = chatFromBlah(chat, serverEndpoint);
 
-				const existing = chatList.find((c) => c.id === chat.ruuid);
+				const existing = chatList.find((c) => c.id === newChat.id);
 				if (existing) {
 					existing.name = newChat.name;
 					existing.lastMessage = newChat.lastMessage ?? existing.lastMessage;
@@ -43,7 +43,7 @@ export class ChatListManager {
 			const chat = chatList.find((c) => c.id === message.signee.payload.room);
 			if (chat) {
 				const newChat = chatFromBlah(
-					{ ruuid: chat.id, title: chat.name, last_chat: message },
+					{ rid: chat.id, title: chat.name, last_chat: message },
 					serverEndpoint
 				);
 				chat.lastMessage = newChat.lastMessage ?? chat.lastMessage;
