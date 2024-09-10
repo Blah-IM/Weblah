@@ -2,6 +2,7 @@ import { derived, readable, type Readable } from 'svelte/store';
 import type { BlahChatServerConnection } from './blah/connection/chatServer';
 import type { BlahRichText } from './richText';
 import { messageFromBlah, type Chat, type Message, type User } from './types';
+import { BlahError } from './blah/connection/error';
 
 const MAX_MESSAGES_PER_SECTION = 10;
 const SHOW_TIME_AFTER_SILENCE = 30 * 60 * 1000;
@@ -79,7 +80,15 @@ export function useChat(
 	});
 
 	const sendMessage = async (brt: BlahRichText) => {
-		await server.sendMessage(chatId, brt);
+		try {
+			await server.sendMessage(chatId, brt);
+		} catch (e) {
+			console.error(e);
+			if (e instanceof BlahError && e.statusCode === 403) {
+				await server.joinRoom(chatId);
+				await server.sendMessage(chatId, brt);
+			}
+		}
 	};
 
 	return { info, messages, sectionedMessages, sendMessage };

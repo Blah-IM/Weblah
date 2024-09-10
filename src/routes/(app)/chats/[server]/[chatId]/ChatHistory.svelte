@@ -38,6 +38,9 @@
 				<AvatarBeam size={32} name={messageSection.sender?.id} />
 			</div>
 			<div class="flex-1">
+				{#if messageSection.sender && !isMyself}
+					<div class="px-3 py-0.5 text-xs text-sf-tertiary">{messageSection.sender.name}</div>
+				{/if}
 				{#each messageSection.messages as message, idx}
 					<ChatMessage
 						{message}
