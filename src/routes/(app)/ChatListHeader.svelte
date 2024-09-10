@@ -10,40 +10,48 @@
 
 	let inputElement: HTMLInputElement;
 
-	function onTapClear() {
+	function onTapClear(e: MouseEvent) {
+		e.preventDefault();
+		e.stopPropagation();
 		searchQuery = '';
-		inputElement.blur();
 	}
 </script>
 
 <header class="flex items-center justify-stretch gap-2 border-b border-ss-secondary p-2 shadow-sm">
 	<IdentityMenu class={tw('transition-opacity duration-200', isSearchFocused && 'opacity-0')} />
-	<InputFrame class={tw('z-10 flex-1 transition-all duration-200', isSearchFocused && '-mx-10')}>
+	<InputFrame
+		class={tw('z-10 h-8 flex-1 transition-all duration-200', isSearchFocused && '-mx-10')}
+	>
 		<Icon src={MagnifyingGlass} class="size-5 text-slate-400" />
 		<input
-			type="text"
+			type="search"
 			placeholder="Search"
-			class="w-full flex-1 bg-transparent text-sm leading-4 text-slate-900 focus:outline-none"
+			class="w-full flex-1 bg-transparent text-sm leading-4 text-sf-primary focus:outline-none"
 			bind:value={searchQuery}
 			bind:this={inputElement}
-			on:focus={() => (isSearchFocused = true)}
+			on:focus={() => {
+				isSearchFocused = true;
+			}}
 			on:blur={(e) => {
 				// If the related target is an anchor element, trigger the click as the user is trying to navigate
-				if (e.relatedTarget instanceof HTMLAnchorElement) {
-					console.log('relatedTarget is an anchor element');
+				if (
+					e.relatedTarget instanceof HTMLAnchorElement ||
+					e.relatedTarget instanceof HTMLButtonElement
+				) {
 					e.relatedTarget.click();
 				}
 				isSearchFocused = false;
 			}}
 		/>
 		<button
+			tabindex="0"
 			class={tw(
-				'pointer-events-none size-4 cursor-default text-slate-300 opacity-0 transition-opacity dark:text-slate-500',
-				isSearchFocused && 'pointer-events-auto opacity-100'
+				'-mx-2 -my-1.5 flex size-8 cursor-text items-center justify-center text-slate-300 opacity-0 transition-opacity duration-200 dark:text-slate-500',
+				isSearchFocused && 'cursor-default opacity-100 '
 			)}
 			on:click={onTapClear}
 		>
-			<Icon src={XCircle} mini />
+			<Icon src={XCircle} class="size-4" mini />
 			<span class="sr-only">Clear</span>
 		</button>
 	</InputFrame>

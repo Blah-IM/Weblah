@@ -25,12 +25,9 @@ export class GlobalSearchManager {
 		}
 
 		const results = await Promise.allSettled(jobs);
-		console.log(results);
 
 		const chats: { joined: Chat[]; public: Chat[] } = { joined: [], public: [] };
 		for (const result of results) {
-			console.log(result);
-
 			if (result.status === 'rejected') continue;
 
 			const [type, chatList] = result.value;

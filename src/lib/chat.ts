@@ -75,7 +75,6 @@ export function useChat(
 
 		sections.push(currentSection);
 
-		console.log(sections);
 		return sections;
 	});
 

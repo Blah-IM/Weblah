@@ -29,7 +29,6 @@ export class ChatListManager {
 					existing.lastMessage = newChat.lastMessage ?? existing.lastMessage;
 				} else {
 					chatList.push(newChat);
-					console.log('new chat added to list', newChat);
 				}
 			}
 

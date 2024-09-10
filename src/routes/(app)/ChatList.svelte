@@ -23,7 +23,7 @@
 				{/each}
 			{/if}
 		</ul>
-		{#if isSearchFocused}
+		{#if isSearchFocused || searchQuery}
 			<div
 				class="absolute inset-0 size-full origin-top touch-pan-y overflow-y-auto bg-sb-primary"
 				transition:scale={{ start: 0.9 }}
