@@ -14,7 +14,10 @@
 		});
 	});
 
-	$: mainVisible = !!$page.params.chatId;
+	$: mainVisible =
+		!!$page.params.chatId ||
+		($page.route.id?.startsWith('/settings') &&
+			!$page.route.id?.startsWith('/settings/_mobile_empty'));
 </script>
 
 <div

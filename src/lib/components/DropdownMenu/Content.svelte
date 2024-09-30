@@ -11,7 +11,7 @@
 
 <DropdownMenu.Content
 	class={tw(
-		'bg-sb-overlay group min-w-32 origin-top rounded-lg border border-ss-secondary p-1 shadow-xl',
+		'group min-w-32 origin-top rounded-lg border border-ss-secondary bg-sb-overlay p-1 shadow-lg',
 		className
 	)}
 	sideOffset={4}
