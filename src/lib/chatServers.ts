@@ -1,7 +1,7 @@
 import { persisted } from 'svelte-persisted-store';
 import { get } from 'svelte/store';
 import { BlahChatServerConnection } from './blah/connection/chatServer';
-import { BlahKeyPair, type EncodedBlahKeyPair } from './blah/crypto';
+import { BlahKeyPair, type EncodedBlahKeyPair } from '@blah-im/core/crypto';
 import { currentKeyPair } from './keystore';
 import { ChatListManager } from './chatList';
 import { browser } from '$app/environment';

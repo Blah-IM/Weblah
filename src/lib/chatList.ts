@@ -1,7 +1,7 @@
 import { readable, writable, type Readable, type Writable } from 'svelte/store';
 import { chatFromBlah, type Chat } from './types';
 import type { BlahMessage, BlahRoomInfo } from './blah/structures';
-import type { BlahSignedPayload } from './blah/crypto';
+import type { BlahSignedPayload } from '@blah-im/core/crypto';
 
 export class ChatListManager {
 	chatList: Writable<Chat[]>;

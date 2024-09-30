@@ -2,7 +2,7 @@
 	import * as DropdownMenu from '$lib/components/DropdownMenu';
 	import { AvatarBeam } from 'svelte-boring-avatars';
 	import { keyStore, currentKeyIndex, currentKeyPair } from '$lib/keystore';
-	import { BlahKeyPair, generateName } from '$lib/blah/crypto';
+	import { BlahKeyPair } from '@blah-im/core/crypto';
 
 	let className: string = '';
 	export { className as class };
@@ -11,7 +11,9 @@
 	let currentKeyName: string | null;
 	$: {
 		currentKeyId = $currentKeyPair?.id;
-		currentKeyName = currentKeyId ? generateName(currentKeyId) : null;
+		currentKeyName = currentKeyId
+			? currentKeyId.slice(0, 4) + '...' + currentKeyId.slice(-4)
+			: null;
 	}
 
 	async function createKeyPair() {
@@ -48,7 +50,7 @@
 				onValueChange={setCurrentKeyIndex}
 			>
 				{#each $keyStore as { id }, idx}
-					{@const name = generateName(id)}
+					{@const name = id.slice(0, 4) + '...' + id.slice(-4)}
 					<DropdownMenu.RadioItem value={idx.toString()}>
 						<div class="flex items-center gap-2 py-0.5">
 							<AvatarBeam size={24} name={id} />
@@ -58,7 +60,7 @@
 				{/each}
 			</DropdownMenu.RadioGroup>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item>Manage identities</DropdownMenu.Item>
+			<DropdownMenu.Item>Settings...</DropdownMenu.Item>
 		{:else}
 			<DropdownMenu.Item on:click={createKeyPair}>Create new identity</DropdownMenu.Item>
 		{/if}

@@ -1,5 +1,5 @@
 import { persisted } from 'svelte-persisted-store';
-import type { EncodedBlahKeyPair } from './blah/crypto';
+import type { EncodedBlahKeyPair } from '@blah-im/core/crypto';
 import { derived } from 'svelte/store';
 
 export const keyStore = persisted<EncodedBlahKeyPair[]>('weblah-keypairs', []);
