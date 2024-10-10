@@ -1,6 +1,6 @@
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
-export const identities = sqliteTable('identities', {
+export const identities = sqliteTable('weblah-identities', {
 	idKey: text('id_key').primaryKey(),
 	actKeys: text('act_keys').notNull(),
 	profileName: text('profile_name').notNull(),
