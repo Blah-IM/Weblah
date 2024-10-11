@@ -1,7 +1,7 @@
 import { BlahKeyPair, BlahPublicKey, type EncodedBlahKeyPair } from '@blah-im/core/crypto';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 
-const IDB_NAME = 'blah-accounts';
+const IDB_NAME = 'weblah-accounts';
 const IDB_OBJECT_STORE_NAME = 'accounts';
 
 type SavedObject = {
