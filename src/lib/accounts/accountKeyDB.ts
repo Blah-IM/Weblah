@@ -11,13 +11,13 @@ type SavedObject = {
 	actKeyPrivate: CryptoKey;
 };
 
-type AccountCredentials = {
+export type AccountCredentials = {
 	idKeyId: string;
 	encodedIdKeyPair?: EncodedBlahKeyPair;
 	actKeyPair: BlahKeyPair;
 };
 
-interface AccountKeyStoreDB extends DBSchema {
+interface AccountKeyDBSchema extends DBSchema {
 	[IDB_OBJECT_STORE_NAME]: {
 		key: string;
 		value: SavedObject;
@@ -36,15 +36,15 @@ async function savedObjectToAccountCredentials(
 	};
 }
 
-export class AccountKeyStore {
-	private db: IDBPDatabase<AccountKeyStoreDB>;
+class AccountKeyDB {
+	private db: IDBPDatabase<AccountKeyDBSchema>;
 
-	private constructor(db: IDBPDatabase<AccountKeyStoreDB>) {
+	private constructor(db: IDBPDatabase<AccountKeyDBSchema>) {
 		this.db = db;
 	}
 
-	static async open(): Promise<AccountKeyStore> {
-		const db = await openDB<AccountKeyStoreDB>(IDB_NAME, 1, {
+	static async open(): Promise<AccountKeyDB> {
+		const db = await openDB<AccountKeyDBSchema>(IDB_NAME, 1, {
 			upgrade(db) {
 				if (!db.objectStoreNames.contains(IDB_OBJECT_STORE_NAME)) {
 					const objStore = db.createObjectStore(IDB_OBJECT_STORE_NAME, { keyPath: 'idKeyId' });
@@ -53,7 +53,7 @@ export class AccountKeyStore {
 			}
 		});
 
-		return new AccountKeyStore(db);
+		return new AccountKeyDB(db);
 	}
 
 	async addAccount(
@@ -115,3 +115,13 @@ export class AccountKeyStore {
 		this.db.close();
 	}
 }
+
+let accountKeyDB: AccountKeyDB | null = null;
+export async function openAccountKeyDB(): Promise<AccountKeyDB> {
+	if (!accountKeyDB) {
+		accountKeyDB = await AccountKeyDB.open();
+	}
+
+	return accountKeyDB;
+}
+export type { AccountKeyDB };
