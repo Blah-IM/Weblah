@@ -2,8 +2,8 @@
 	import Button from '$lib/components/Button.svelte';
 	import InputFrame from '$lib/components/InputFrame.svelte';
 	import { Icon, MagnifyingGlass, PencilSquare, XCircle } from 'svelte-hero-icons';
-	import IdentityMenu from './IdentityMenu.svelte';
 	import { tw } from '$lib/tw';
+	import CurrentAccountPicture from './CurrentAccountPicture.svelte';
 
 	export let searchQuery: string = '';
 	export let isSearchFocused: boolean;
@@ -18,7 +18,15 @@
 </script>
 
 <header class="flex items-center justify-stretch gap-2 border-b border-ss-secondary p-2 shadow-sm">
-	<IdentityMenu class={tw('transition-opacity duration-200', isSearchFocused && 'opacity-0')} />
+	<a
+		class={tw(
+			'transition-[opacity,transform] duration-200',
+			isSearchFocused && '-translate-x-full opacity-0'
+		)}
+		href="/settings"
+	>
+		<CurrentAccountPicture />
+	</a>
 	<InputFrame
 		class={tw('z-10 h-8 flex-1 transition-all duration-200', isSearchFocused && '-mx-10')}
 	>
@@ -46,8 +54,8 @@
 		<button
 			tabindex="0"
 			class={tw(
-				'-mx-2 -my-1.5 flex size-8 cursor-text items-center justify-center text-slate-300 opacity-0 transition-opacity duration-200 dark:text-slate-500',
-				isSearchFocused && 'cursor-default opacity-100 '
+				'-mx-2 -my-1.5 flex size-8 cursor-text items-center justify-center text-slate-300 opacity-0 transition-[opacity,transform] duration-200 dark:text-slate-500',
+				isSearchFocused && 'translate-x-full cursor-default opacity-100'
 			)}
 			on:click={onTapClear}
 		>

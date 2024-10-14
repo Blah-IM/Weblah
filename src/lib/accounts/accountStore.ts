@@ -3,13 +3,14 @@ import { type AccountKeyDB, openAccountKeyDB } from './accountKeyDB';
 import { BlahIdentity, type BlahIdentityFile, type BlahProfile } from '@blah-im/core/identity';
 import { type IdentityFileDB, openIdentityFileDB } from '$lib/identityFiles/identityFileDB';
 import { BlahKeyPair } from '@blah-im/core/crypto';
+import { persisted } from 'svelte-persisted-store';
 
 export type Account = BlahIdentityFile & {
 	holdingKeyPrivate: boolean;
 	holdingPrivateOfActKey?: string;
 };
 
-export class AccountStore implements Readable<Account[]> {
+class AccountStore implements Readable<Account[]> {
 	private keyDB: AccountKeyDB;
 	private identityFileDB: IdentityFileDB;
 	private internalStore = writable<Account[]>([]);
@@ -83,3 +84,16 @@ export class AccountStore implements Readable<Account[]> {
 		await this.saveIdentityFile(identity);
 	}
 }
+
+let accountStore: AccountStore | undefined;
+
+export async function openAccountStore(): Promise<AccountStore> {
+	if (!accountStore) {
+		accountStore = await AccountStore.open();
+	}
+	return accountStore;
+}
+
+export type { AccountStore };
+
+export const currentAccountStore = persisted<string | null>('weblah-current-account-id-key', null);

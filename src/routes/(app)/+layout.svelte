@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { onNavigate } from '$app/navigation';
 	import ChatList from './ChatList.svelte';
+	import SettingsList from './settings/SettingsList.svelte';
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) return;
@@ -14,10 +15,9 @@
 		});
 	});
 
+	$: isSettings = $page.route.id?.startsWith('/settings');
 	$: mainVisible =
-		!!$page.params.chatId ||
-		($page.route.id?.startsWith('/settings') &&
-			!$page.route.id?.startsWith('/settings/_mobile_empty'));
+		!!$page.params.chatId || (isSettings && !$page.route.id?.startsWith('/settings/_mobile_empty'));
 </script>
 
 <div
@@ -28,6 +28,9 @@
 		class="relative h-[100dvh] min-h-0 overflow-hidden border-ss-primary bg-sb-primary shadow-lg [view-transition-name:chat-list] after:pointer-events-none after:absolute after:inset-0 after:size-full after:bg-transparent group-data-[weblah-main-visible]:after:bg-black/30 sm:w-1/3 sm:border-e sm:after:hidden lg:w-1/4"
 	>
 		<ChatList />
+		{#if isSettings}
+			<SettingsList />
+		{/if}
 	</aside>
 	{#if mainVisible}
 		<main
