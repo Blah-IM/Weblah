@@ -3,6 +3,7 @@
 	import { formatUnreadCount } from '$lib/formatters';
 	import type { Chat } from '$lib/types';
 	import { AvatarBeam } from 'svelte-boring-avatars';
+	import { ChevronLeft, Icon } from 'svelte-hero-icons';
 
 	export let info: Chat;
 	export let outsideUnreadCount = 0;
@@ -12,16 +13,7 @@
 	class="relative z-10 box-border flex min-h-[calc(3rem+1px)] w-full items-center gap-2 border-b border-ss-secondary bg-sb-primary p-2 shadow-sm"
 >
 	<Button href="/" class="rounded-full sm:hidden">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke-width="1.5"
-			stroke="currentColor"
-			class="-me-0.5 -ms-1 size-5"
-		>
-			<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-		</svg>
+		<Icon src={ChevronLeft} />
 		{#if outsideUnreadCount}
 			<span class="text-xs text-sf-tertiary">{formatUnreadCount(outsideUnreadCount)}</span>
 		{/if}

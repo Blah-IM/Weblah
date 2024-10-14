@@ -15,9 +15,10 @@
 		});
 	});
 
-	$: isSettings = $page.route.id?.startsWith('/settings');
+	$: isSettings = $page.route.id?.startsWith('/(app)/settings');
 	$: mainVisible =
-		!!$page.params.chatId || (isSettings && !$page.route.id?.startsWith('/settings/_mobile_empty'));
+		!!$page.params.chatId ||
+		(isSettings && !$page.route.id?.startsWith('/(app)/settings/_mobile_empty'));
 </script>
 
 <div
@@ -29,7 +30,7 @@
 	>
 		<ChatList />
 		{#if isSettings}
-			<SettingsList />
+			<SettingsList class="absolute inset-0 z-10 size-full [view-transition-name:settings-list]" />
 		{/if}
 	</aside>
 	{#if mainVisible}
@@ -61,6 +62,27 @@
 		}
 	}
 
+	@keyframes float-in {
+		from {
+			transform: scale(0.9);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+	@keyframes float-out {
+		from {
+			transform: scale(1);
+			opacity: 1;
+		}
+		to {
+			transform: scale(0.9);
+			opacity: 0;
+		}
+	}
+
 	:root::view-transition-old(root),
 	:root::view-transition-new(root) {
 		animation-duration: 250ms;
@@ -70,5 +92,15 @@
 	}
 	:root::view-transition-new(main) {
 		animation: 250ms ease-out slide-in;
+	}
+	:root::view-transition-old(settings-list),
+	:root::view-transition-new(settings-list) {
+		transform-origin: top left;
+	}
+	:root::view-transition-old(settings-list) {
+		animation: 250ms ease-out float-out;
+	}
+	:root::view-transition-new(settings-list) {
+		animation: 250ms ease-out float-in;
 	}
 </style>

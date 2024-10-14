@@ -14,7 +14,7 @@
 {:else}
 	<div
 		class="box-border size-[--weblah-profile-pic-size] rounded-full border-2 border-dashed border-ss-primary"
-		style:--weblah-profile-pic-size={`${size - 2}px`}
+		style:--weblah-profile-pic-size={`${size}px`}
 		aria-hidden
 	/>
 	<span class="sr-only">Account Unavailable</span>

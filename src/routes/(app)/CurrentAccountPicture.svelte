@@ -25,6 +25,8 @@
 	}
 </script>
 
-{#await getAccount($currentAccountStore) then currentAccount}
+{#await getAccount($currentAccountStore)}
+	<ProfilePicture account={undefined} />
+{:then currentAccount}
 	<ProfilePicture account={currentAccount} {size} />
 {/await}
