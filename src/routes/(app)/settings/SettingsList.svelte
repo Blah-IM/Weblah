@@ -26,7 +26,7 @@
 			<GroupedListItem icon={UserPlus}>Add Account</GroupedListItem>
 		</GroupedListSection>
 		<GroupedListSection>
-			<GroupedListItem icon={Cog}>General</GroupedListItem>
+			<GroupedListItem icon={Cog} selected>General</GroupedListItem>
 			<GroupedListItem icon={Bell}>Notifications</GroupedListItem>
 			<GroupedListItem icon={LockClosed}>Privacy and Security</GroupedListItem>
 			<GroupedListItem icon={DevicePhoneMobile}>Devices</GroupedListItem>
