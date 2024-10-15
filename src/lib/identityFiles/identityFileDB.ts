@@ -25,7 +25,7 @@ class IdentityFileDB {
 		const db = await openDB<IdentityFileDBSchema>(IDB_NAME, 1, {
 			upgrade(db) {
 				if (!db.objectStoreNames.contains(IDB_OBJECT_STORE_NAME)) {
-					const store = db.createObjectStore(IDB_OBJECT_STORE_NAME, { keyPath: 'idKeyId' });
+					const store = db.createObjectStore(IDB_OBJECT_STORE_NAME, { keyPath: 'id_key' });
 					store.createIndex('id_urls', 'profile.signee.payload.id_urls', {
 						multiEntry: true,
 						unique: true

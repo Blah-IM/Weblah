@@ -5,7 +5,8 @@
 	import SettingsList from './settings/SettingsList.svelte';
 
 	onNavigate((navigation) => {
-		if (!document.startViewTransition) return;
+		if (!document.startViewTransition || navigation.from?.url.href === navigation.to?.url.href)
+			return;
 
 		return new Promise((resolve) => {
 			document.startViewTransition(async () => {
@@ -15,7 +16,7 @@
 		});
 	});
 
-	$: isSettings = $page.route.id?.startsWith('/(app)/settings');
+	$: isSettings = $page.route.id?.startsWith('/(app)/settings') ?? true;
 	$: mainVisible =
 		!!$page.params.chatId ||
 		(isSettings && !$page.route.id?.startsWith('/(app)/settings/_mobile_empty'));
@@ -30,7 +31,7 @@
 	>
 		<ChatList />
 		{#if isSettings}
-			<SettingsList class="absolute inset-0 z-10 size-full [view-transition-name:settings-list]" />
+			<SettingsList class="absolute inset-0 z-10 size-full origin-top-left" />
 		{/if}
 	</aside>
 	{#if mainVisible}

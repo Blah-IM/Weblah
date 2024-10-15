@@ -11,7 +11,7 @@
 	this={href ? 'a' : 'div'}
 	{href}
 	class={tw(
-		'flex items-center gap-2 px-4 py-3 font-medium text-sf-primary first:rounded-t-lg last:rounded-b-lg',
+		'flex cursor-default items-center gap-2 px-4 py-3 font-medium text-sf-primary first:rounded-t-lg last:rounded-b-lg',
 		selected && 'bg-accent-500 text-white shadow-inner dark:bg-accent-900 dark:text-sf-primary'
 	)}
 >

@@ -20,7 +20,7 @@
 	{href}
 	class={tw(
 		'inline-flex cursor-default items-center justify-center rounded-md px-2 py-1 text-sf-secondary shadow-sm ring-1 ring-ss-secondary',
-		'transition-shadow duration-200 hover:ring-ss-primary active:shadow-inner',
+		'font-normal transition-shadow duration-200 hover:ring-ss-primary active:shadow-inner',
 		variant === 'primary' && [
 			'relative text-slate-50 ring-0 duration-200',
 			'before:absolute before:-inset-px before:rounded-[7px]',

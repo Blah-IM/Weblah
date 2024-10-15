@@ -3,6 +3,7 @@
 	import { GroupedListSection, GroupedListItem } from '$lib/components/GroupedList';
 	import { tw } from '$lib/tw';
 	import {
+		ArrowRightEndOnRectangle,
 		Bell,
 		Cog,
 		DevicePhoneMobile,
@@ -11,22 +12,32 @@
 		QuestionMarkCircle,
 		UserPlus
 	} from 'svelte-hero-icons';
+	import { scale } from 'svelte/transition';
+	import SettingsListItem from './SettingsListItem.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 
 	let className = '';
 	export { className as class };
 </script>
 
-<div class={tw('flex flex-col bg-sb-secondary shadow-md', className)}>
-	<div class="flex items-center border-b border-ss-secondary bg-sb-primary p-2 shadow-sm">
+<div
+	class={tw('flex flex-col bg-sb-secondary shadow-md', className)}
+	transition:scale={{ duration: 250, start: 0.95 }}
+>
+	<PageHeader>
 		<Button href="/">Done</Button>
-		<h2 class="flex-1 truncate text-center font-semibold text-sf-primary">Settings</h2>
-	</div>
+		<h2 class="flex-1 truncate text-center">Settings</h2>
+		<Button href="/account/profile">Edit</Button>
+	</PageHeader>
 	<div class="flex-1 overflow-y-scroll">
 		<GroupedListSection>
-			<GroupedListItem icon={UserPlus}>Add Account</GroupedListItem>
+			<SettingsListItem icon={ArrowRightEndOnRectangle} route="/account/add">
+				Sign in
+			</SettingsListItem>
+			<SettingsListItem icon={UserPlus} route="/account/new">Create Account</SettingsListItem>
 		</GroupedListSection>
 		<GroupedListSection>
-			<GroupedListItem icon={Cog} selected>General</GroupedListItem>
+			<SettingsListItem icon={Cog} route="">General</SettingsListItem>
 			<GroupedListItem icon={Bell}>Notifications</GroupedListItem>
 			<GroupedListItem icon={LockClosed}>Privacy and Security</GroupedListItem>
 			<GroupedListItem icon={DevicePhoneMobile}>Devices</GroupedListItem>
