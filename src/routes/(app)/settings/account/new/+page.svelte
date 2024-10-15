@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { openAccountStore } from '$lib/accounts/accountStore';
+	import { currentAccountStore, openAccountStore } from '$lib/accounts/accountStore';
 	import Button from '$lib/components/Button.svelte';
 	import {
 		GroupedListContainer,
@@ -57,7 +57,8 @@
 
 		try {
 			const accountStore = await openAccountStore();
-			await accountStore.createAccount(profile, password);
+			const idKeyId = await accountStore.createAccount(profile, password);
+			$currentAccountStore = idKeyId;
 		} catch (error) {
 			console.error(error);
 		}

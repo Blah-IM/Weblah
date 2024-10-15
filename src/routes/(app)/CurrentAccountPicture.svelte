@@ -2,31 +2,25 @@
 	import {
 		currentAccountStore,
 		openAccountStore,
-		type Account,
 		type AccountStore
 	} from '$lib/accounts/accountStore';
 	import ProfilePicture from '$lib/components/ProfilePicture.svelte';
+	import { onMount } from 'svelte';
 
 	export let size: number = 32;
 
 	let accountStore: AccountStore;
 
-	async function getAccount(idKeyId: string | null): Promise<Account | undefined> {
-		if (!accountStore) {
-			accountStore = await openAccountStore();
-		}
-		if (!idKeyId) return;
-		let currentAccount = $accountStore.find((account) => account.id_key === idKeyId);
-		if (!currentAccount && $accountStore.length > 0) {
-			currentAccount = $accountStore[0];
-			$currentAccountStore = currentAccount.id_key;
-		}
-		return currentAccount;
-	}
+	onMount(() => {
+		openAccountStore().then((store) => {
+			accountStore = store;
+		});
+	});
 </script>
 
-{#await getAccount($currentAccountStore)}
-	<ProfilePicture account={undefined} />
-{:then currentAccount}
+{#if accountStore}
+	{@const currentAccount = $accountStore.find((account) => account.id_key === $currentAccountStore)}
 	<ProfilePicture account={currentAccount} {size} />
-{/await}
+{:else}
+	<ProfilePicture account={undefined} {size} />
+{/if}

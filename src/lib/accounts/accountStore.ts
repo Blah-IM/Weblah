@@ -75,13 +75,15 @@ class AccountStore implements Readable<Account[]> {
 		await this.identityFileDB.updateIdentityFile(identityFile);
 	}
 
-	async createAccount(profile: BlahProfile, password: string) {
+	async createAccount(profile: BlahProfile, password: string): Promise<string> {
 		const idKeyPair = await BlahKeyPair.generate(true);
 		const actKeyPair = await BlahKeyPair.generate(false);
 		const identity = await BlahIdentity.create(idKeyPair, actKeyPair, profile);
 		const encodedIdKeyPair = await idKeyPair.encode(password);
 		await this.keyDB.addAccount(idKeyPair.id, actKeyPair, encodedIdKeyPair);
 		await this.saveIdentityFile(identity);
+		await this.loadAccounts();
+		return idKeyPair.id;
 	}
 }
 

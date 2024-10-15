@@ -3,18 +3,17 @@
 	import { GroupedListSection, GroupedListItem } from '$lib/components/GroupedList';
 	import { tw } from '$lib/tw';
 	import {
-		ArrowRightEndOnRectangle,
 		Bell,
 		Cog,
 		DevicePhoneMobile,
 		InformationCircle,
 		LockClosed,
-		QuestionMarkCircle,
-		UserPlus
+		QuestionMarkCircle
 	} from 'svelte-hero-icons';
 	import { scale } from 'svelte/transition';
 	import SettingsListItem from './SettingsListItem.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
+	import SettingsAccountSections from './SettingsAccountSections.svelte';
 
 	let className = '';
 	export { className as class };
@@ -30,18 +29,15 @@
 		<Button href="/account/profile">Edit</Button>
 	</PageHeader>
 	<div class="flex-1 overflow-y-scroll">
-		<GroupedListSection>
-			<SettingsListItem icon={ArrowRightEndOnRectangle} route="/account/add">
-				Sign in
-			</SettingsListItem>
-			<SettingsListItem icon={UserPlus} route="/account/new">Create Account</SettingsListItem>
-		</GroupedListSection>
+		<SettingsAccountSections />
+
 		<GroupedListSection>
 			<SettingsListItem icon={Cog} route="">General</SettingsListItem>
 			<GroupedListItem icon={Bell}>Notifications</GroupedListItem>
 			<GroupedListItem icon={LockClosed}>Privacy and Security</GroupedListItem>
 			<GroupedListItem icon={DevicePhoneMobile}>Devices</GroupedListItem>
 		</GroupedListSection>
+
 		<GroupedListSection>
 			<GroupedListItem icon={InformationCircle}>About Blah & Weblah</GroupedListItem>
 			<GroupedListItem icon={QuestionMarkCircle}>Ask a Question</GroupedListItem>
