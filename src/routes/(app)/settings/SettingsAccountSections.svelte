@@ -53,16 +53,18 @@
 		{/key}
 	{/if}
 
-	<GroupedListSection>
-		{#each remainingAccounts as account (account.id_key)}
-			<div animate:flip={{ duration: 250 }} transition:blur>
-				<GroupedListItem on:click={() => switchToAccount(account)}>
-					<div class="-mx-0.5"><ProfilePicture {account} size={24} /></div>
-					{account.profile.signee.payload.name}
-				</GroupedListItem>
-			</div>
-		{/each}
-	</GroupedListSection>
+	{#if remainingAccounts.length > 0}
+		<GroupedListSection>
+			{#each remainingAccounts as account (account.id_key)}
+				<div animate:flip={{ duration: 250 }} transition:blur>
+					<GroupedListItem on:click={() => switchToAccount(account)}>
+						<div class="-mx-0.5"><ProfilePicture {account} size={24} /></div>
+						{account.profile.signee.payload.name}
+					</GroupedListItem>
+				</div>
+			{/each}
+		</GroupedListSection>
+	{/if}
 {/if}
 
 <GroupedListSection>
