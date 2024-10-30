@@ -1,11 +1,15 @@
 import { writable, type Readable } from 'svelte/store';
 import { type AccountKeyDB, openAccountKeyDB } from './accountKeyDB';
-import { BlahIdentity, type BlahIdentityFile, type BlahProfile } from '@blah-im/core/identity';
+import {
+	BlahIdentity,
+	type BlahIdentityDescription,
+	type BlahProfile
+} from '@blah-im/core/identity';
 import { type IdentityFileDB, openIdentityFileDB } from '$lib/identityFiles/identityFileDB';
 import { BlahKeyPair } from '@blah-im/core/crypto';
 import { persisted } from 'svelte-persisted-store';
 
-export type Account = BlahIdentityFile & {
+export type Account = BlahIdentityDescription & {
 	holdingKeyPrivate: boolean;
 	holdingPrivateOfActKey?: string;
 };
@@ -67,12 +71,12 @@ class AccountStore implements Readable<Account[]> {
 			: undefined;
 		const actKeyPair = accountCreds?.actKeyPair;
 
-		return await BlahIdentity.fromIdentityFile(identityFile, idKeyPair, actKeyPair);
+		return await BlahIdentity.fromIdentityDescription(identityFile, idKeyPair, actKeyPair);
 	}
 
-	async saveIdentityFile(identity: BlahIdentity) {
-		const identityFile = identity.generateIdentityFile();
-		await this.identityFileDB.updateIdentityFile(identityFile);
+	async saveIdentityDescription(identity: BlahIdentity) {
+		const identityDesc = identity.generateIdentityDescription();
+		await this.identityFileDB.updateIdentityFile(identityDesc);
 	}
 
 	async createAccount(profile: BlahProfile, password: string): Promise<string> {
@@ -81,7 +85,7 @@ class AccountStore implements Readable<Account[]> {
 		const identity = await BlahIdentity.create(idKeyPair, actKeyPair, profile);
 		const encodedIdKeyPair = await idKeyPair.encode(password);
 		await this.keyDB.addAccount(idKeyPair.id, actKeyPair, encodedIdKeyPair);
-		await this.saveIdentityFile(identity);
+		await this.saveIdentityDescription(identity);
 		await this.loadAccounts();
 		return idKeyPair.id;
 	}
