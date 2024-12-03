@@ -13,6 +13,7 @@
 		"format": "prettier --write ."
 	},
 	"type": "module",
+	"packageManager": "pnpm@9.14.4",
 	"devDependencies": {
 		"@melt-ui/pp": "^0.3.2",
 		"@sveltejs/adapter-auto": "^3.3.1",
