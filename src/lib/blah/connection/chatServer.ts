@@ -1,6 +1,6 @@
 import { version } from '$app/environment';
-import type { BlahRichText } from '$lib/richText';
-import type { BlahKeyPair, BlahSignedPayload } from '../crypto';
+import type { BlahRichText } from '@blah-im/core/richText';
+import type { BlahKeyPair, BlahSignedPayload } from '@blah-im/core/crypto';
 import type { BlahAuth, BlahMessage, BlahRoomInfo, BlahUserJoinMessage } from '../structures';
 import { BlahError } from './error';
 

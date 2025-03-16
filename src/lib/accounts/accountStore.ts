@@ -5,7 +5,7 @@ import {
 	type BlahIdentityDescription,
 	type BlahProfile
 } from '@blah-im/core/identity';
-import { type IdentityFileDB, openIdentityFileDB } from '$lib/identityFiles/identityFileDB';
+import { type IdentityDB, openIdentityDB } from './identityFileDB';
 import { BlahKeyPair } from '@blah-im/core/crypto';
 import { persisted } from 'svelte-persisted-store';
 
@@ -16,18 +16,18 @@ export type Account = BlahIdentityDescription & {
 
 class AccountStore implements Readable<Account[]> {
 	private keyDB: AccountKeyDB;
-	private identityFileDB: IdentityFileDB;
+	private identityDB: IdentityDB;
 	private internalStore = writable<Account[]>([]);
 	subscribe = this.internalStore.subscribe;
 
-	private constructor(keyDB: AccountKeyDB, identityFileDB: IdentityFileDB) {
+	private constructor(keyDB: AccountKeyDB, identityDB: IdentityDB) {
 		this.keyDB = keyDB;
-		this.identityFileDB = identityFileDB;
+		this.identityDB = identityDB;
 	}
 
 	static async open(): Promise<AccountStore> {
 		const keyDB = await openAccountKeyDB();
-		const identityFileDB = await openIdentityFileDB();
+		const identityFileDB = await openIdentityDB();
 		const store = new AccountStore(keyDB, identityFileDB);
 		await store.loadAccounts();
 		return store;
@@ -35,7 +35,7 @@ class AccountStore implements Readable<Account[]> {
 
 	async loadAccounts() {
 		const accountCreds = await this.keyDB.fetchAllAccounts();
-		const identityFileMap = await this.identityFileDB.fetchIdentityFiles(
+		const identityFileMap = await this.identityDB.fetchIdentities(
 			accountCreds.map((x) => x.idKeyId)
 		);
 
@@ -61,7 +61,7 @@ class AccountStore implements Readable<Account[]> {
 		const idKeyId =
 			typeof accountOrIdKeyId === 'string' ? accountOrIdKeyId : accountOrIdKeyId.id_key;
 
-		const identityFile = await this.identityFileDB.fetchIdentityFile(idKeyId);
+		const identityFile = await this.identityDB.fetchIdentity(idKeyId);
 		if (!identityFile) throw new Error('Identity file not found');
 
 		const accountCreds = await this.keyDB.fetchAccount(idKeyId);
@@ -76,7 +76,7 @@ class AccountStore implements Readable<Account[]> {
 
 	async saveIdentityDescription(identity: BlahIdentity) {
 		const identityDesc = identity.generateIdentityDescription();
-		await this.identityFileDB.updateIdentityFile(identityDesc);
+		await this.identityDB.updateIdentity(identityDesc);
 	}
 
 	async createAccount(profile: BlahProfile, password: string): Promise<string> {

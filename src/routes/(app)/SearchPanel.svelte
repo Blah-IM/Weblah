@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { chatServerConnectionPool } from '$lib/chatServers';
 	import { ChatBubbleLeftRight, Icon } from 'svelte-hero-icons';
-	import ChatListItem from './ChatListItem.svelte';
 	import SearchChatResultSection from './SearchChatResultSection.svelte';
 
 	interface Props {
@@ -18,7 +17,7 @@
 
 {#await search(searchQuery)}
 	<div class="flex size-full items-center justify-center">
-		<Icon src={ChatBubbleLeftRight} solid class="w-1/3 animate-pulse fill-sf-tertiary" />
+		<Icon src={ChatBubbleLeftRight} solid class="fill-sf-tertiary w-1/3 animate-pulse" />
 	</div>
 {:then results}
 	{#if results.joined.length === 0 && results.public.length === 0}

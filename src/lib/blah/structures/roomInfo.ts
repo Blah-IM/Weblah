@@ -1,4 +1,4 @@
-import type { BlahSignedPayload } from '../crypto';
+import type { BlahSignedPayload } from '@blah-im/core/crypto';
 import type { BlahMessage } from './message';
 
 export type BlahRoomInfo = {

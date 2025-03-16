@@ -1,6 +1,6 @@
 import type { BlahSignedPayload } from '@blah-im/core/crypto';
 import type { BlahMessage } from '$lib/blah/structures';
-import type { BlahRichText } from '$lib/richText';
+import type { BlahRichText } from '@blah-im/core/richText';
 
 export type Message = {
 	id: string;

@@ -1,4 +1,4 @@
-import type { BlahRichText } from '$lib/richText';
+import type { BlahRichText } from '@blah-im/core/richText';
 
 export type BlahMessage = {
 	rich_text: BlahRichText;

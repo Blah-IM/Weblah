@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { AvatarBeam } from 'svelte-boring-avatars';
 
-	import { formatMessageDate, formatUnreadCount } from '$lib/formatters';
+	import { formatMessageDate, formatFullMessageDate, formatUnreadCount } from '$lib/formatters';
 	import type { Chat } from '$lib/types';
 	import { currentKeyPair } from '$lib/keystore';
-	import { blahRichTextToPlainText } from '$lib/richText';
-	import { page } from '$app/stores';
+	import { toPlainText } from '@blah-im/core/richText';
+	import { page } from '$app/state';
 	import { tw } from '$lib/tw';
 
 	interface Props {
@@ -16,19 +14,20 @@
 
 	let { chat }: Props = $props();
 
-	let urlSafeEndpoint: string = $state();
-	run(() => {
+	function urlSafeEndpointForChat(chat: Chat) {
 		const url = new URL(chat.server);
-		urlSafeEndpoint = encodeURIComponent(url.hostname + url.pathname);
-	});
+		return encodeURIComponent(url.hostname + url.pathname);
+	}
 
-	let isSelected = $derived($page.params.chatId === chat.id);
+	let urlSafeEndpoint = $derived(urlSafeEndpointForChat(chat));
+
+	let isSelected = $derived(page.params.chatId === chat.id);
 </script>
 
 <li
 	class={tw(
-		'relative after:absolute after:bottom-0 after:end-0 after:start-14 after:border-t-[0.5px] after:border-ss-secondary',
-		isSelected && 'bg-accent-100 shadow-inner dark:bg-accent-950'
+		'after:border-ss-secondary relative after:absolute after:start-14 after:end-0 after:bottom-0 after:border-t-[0.5px]',
+		isSelected && 'bg-accent-100 dark:bg-accent-950 shadow-inner'
 	)}
 >
 	<a
@@ -44,16 +43,16 @@
 				<h3 class="flex-1 truncate text-sm font-semibold">{chat.name}</h3>
 				{#if chat.lastMessage}
 					<time
-						class="truncate text-xs text-sf-tertiary"
+						class="text-sf-tertiary truncate text-xs"
 						datetime={chat.lastMessage.date.toISOString()}
-						title={formatMessageDate(chat.lastMessage.date, true)}
+						title={formatFullMessageDate(chat.lastMessage.date)}
 					>
 						{formatMessageDate(chat.lastMessage.date)}
 					</time>
 				{/if}
 			</div>
 			<div class="flex items-end gap-1">
-				<p class="line-clamp-2 h-[2.5em] flex-1 text-sm leading-tight text-sf-secondary">
+				<p class="text-sf-secondary line-clamp-2 h-[2.5em] flex-1 text-sm leading-tight">
 					{#if chat.lastMessage}
 						{#if chat.id !== chat.lastMessage.sender.id}
 							<span class="text-sf-primary">
@@ -62,12 +61,12 @@
 									: chat.lastMessage.sender.name}:
 							</span>
 						{/if}
-						{blahRichTextToPlainText(chat.lastMessage.content)}
+						{toPlainText(chat.lastMessage.content)}
 					{/if}
 				</p>
 				{#if chat.unreadCount}
 					<span
-						class="whitespace-nowrap rounded-full bg-slate-400 px-1.5 py-0.5 text-xs text-slate-50 dark:bg-slate-500 dark:text-slate-950"
+						class="rounded-full bg-slate-400 px-1.5 py-0.5 text-xs whitespace-nowrap text-slate-50 dark:bg-slate-500 dark:text-slate-950"
 					>
 						{formatUnreadCount(chat.unreadCount)}
 					</span>

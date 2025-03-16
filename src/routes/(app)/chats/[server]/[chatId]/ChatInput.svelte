@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
-	import { deltaToBlahRichText, type BlahRichText } from '$lib/richText';
+	import { deltaToBlahRichText, type BlahRichText } from '@blah-im/core/richText';
 	import { createEventDispatcher } from 'svelte';
 	import type { Delta, Editor } from 'typewriter-editor';
 

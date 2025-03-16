@@ -13,7 +13,7 @@
 
 	let { size = 32 }: Props = $props();
 
-	let accountStore: AccountStore = $state();
+	let accountStore: AccountStore | undefined = $state();
 
 	onMount(() => {
 		openAccountStore().then((store) => {
@@ -22,7 +22,7 @@
 	});
 </script>
 
-{#if accountStore}
+{#if accountStore && $accountStore}
 	{@const currentAccount = $accountStore.find((account) => account.id_key === $currentAccountStore)}
 	<ProfilePicture account={currentAccount} {size} />
 {:else}

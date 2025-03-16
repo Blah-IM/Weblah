@@ -1,12 +1,13 @@
 <!-- @migration-task Error while migrating Svelte code: $$props is used together with named props in a way that cannot be automatically migrated. -->
 <script lang="ts">
-	import type { BlahRichTextSpanAttributes } from '$lib/richText';
+	import type { BlahRichTextSpanAttributes } from '@blah-im/core/richText';
 	import PlainTextRenderer from './PlainTextRenderer.svelte';
 
 	// From outside to inside, better align this with the RichTextInput
 	const renderOrder: (keyof BlahRichTextSpanAttributes)[] = [
+		'spoiler',
 		'link',
-		'hashtag',
+		'tag',
 		'b',
 		'i',
 		'm',
@@ -40,7 +41,7 @@
 	<a href={attributes.link} target="_blank">
 		<svelte:self {...$$props} attribute={nextAttribute} />
 	</a>
-{:else if attribute === 'hashtag'}
+{:else if attribute === 'tag'}
 	<a href={`/search?q=${encodeURIComponent(text)}`}>
 		<svelte:self {...$$props} attribute={nextAttribute} />
 	</a>

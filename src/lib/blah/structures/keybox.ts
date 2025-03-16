@@ -1,4 +1,4 @@
-import type { BlahSignedPayload } from '../crypto';
+import type { BlahSignedPayload } from '@blah-im/core/crypto';
 
 export type BlahActKeyEntry = {
 	exp: number;

@@ -1,4 +1,4 @@
-import type { BlahRichText } from '$lib/richText';
+import type { BlahRichText } from '@blah-im/core/richText';
 import type { Message, User } from '$lib/types';
 import { getRandomUser } from './users';
 

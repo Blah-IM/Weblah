@@ -8,7 +8,7 @@
 	import ChatHeader from './ChatHeader.svelte';
 	import ChatHistory from './ChatHistory.svelte';
 	import ChatInput from './ChatInput.svelte';
-	import type { BlahRichText } from '$lib/richText';
+	import type { BlahRichText } from '@blah-im/core/richText';
 	import type { MessageSection } from '$lib/chat';
 
 	interface Props {

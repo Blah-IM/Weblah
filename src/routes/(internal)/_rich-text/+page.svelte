@@ -1,6 +1,6 @@
 <script lang="ts">
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
-	import { deltaToBlahRichText } from '$lib/richText';
+	import { deltaToBlahRichText } from '@blah-im/core/richText';
 	import type { Delta } from 'typewriter-editor';
 
 	let delta: Delta = $state();
@@ -16,14 +16,14 @@
 <div class="flex min-h-0 flex-1 gap-4 p-4">
 	<div class="flex min-h-0 flex-1 flex-col">
 		<h2 class="text-lg">Delta (Editor's internal representation)</h2>
-		<div class="min-h-0 flex-1 select-text overflow-auto">
+		<div class="min-h-0 flex-1 overflow-auto select-text">
 			<pre><code>{JSON.stringify(delta, null, 2)}</code></pre>
 		</div>
 	</div>
 
 	<div class="flex min-h-0 flex-1 flex-col">
 		<h2 class="text-lg">Blah Rich Text</h2>
-		<div class="min-h-0 flex-1 select-text overflow-auto">
+		<div class="min-h-0 flex-1 overflow-auto select-text">
 			<pre><code>{JSON.stringify(brt, null, 2)}</code></pre>
 		</div>
 	</div>

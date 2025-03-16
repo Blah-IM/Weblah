@@ -11,9 +11,9 @@
 	import { onMount } from 'svelte';
 	import ProfilePicture from '$lib/components/ProfilePicture.svelte';
 	import { flip } from 'svelte/animate';
-	import { blur, scale } from 'svelte/transition';
+	import { blur } from 'svelte/transition';
 
-	let accountStore: AccountStore = $state();
+	let accountStore: AccountStore | undefined = $state();
 
 	onMount(() => {
 		openAccountStore().then((store) => {
@@ -26,7 +26,7 @@
 	}
 </script>
 
-{#if accountStore}
+{#if accountStore && $accountStore}
 	{@const currentAccount = $accountStore.find((acc) => acc.id_key === $currentAccountStore)}
 	{@const remainingAccounts = $accountStore
 		.filter((acc) => acc.id_key !== $currentAccountStore)
@@ -38,12 +38,12 @@
 					<ProfilePicture account={currentAccount} size={68} />
 				</div>
 				<p>
-					<span class="text-xl font-semibold text-sf-primary">
+					<span class="text-sf-primary text-xl font-semibold">
 						{currentAccount.profile.signee.payload.name}
 					</span>
 				</p>
 				<p>
-					<code class="text-sm text-sf-secondary">
+					<code class="text-sf-secondary text-sm">
 						{currentAccount.profile.signee.id_key.slice(0, 6) +
 							'...' +
 							currentAccount.profile.signee.id_key.slice(-6)}
@@ -57,7 +57,7 @@
 		<GroupedListSection>
 			{#each remainingAccounts as account (account.id_key)}
 				<div animate:flip={{ duration: 250 }} transition:blur>
-					<GroupedListItem on:click={() => switchToAccount(account)}>
+					<GroupedListItem onclick={() => switchToAccount(account)}>
 						<div class="-mx-0.5"><ProfilePicture {account} size={24} /></div>
 						{account.profile.signee.payload.name}
 					</GroupedListItem>

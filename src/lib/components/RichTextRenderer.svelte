@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BlahRichText } from '$lib/richText';
+	import type { BlahRichText } from '@blah-im/core/richText';
 	import { tw } from '$lib/tw';
 	import RichTextSpan from './RichTextRenderer/RichTextSpan.svelte';
 	import PlainTextRenderer from './RichTextRenderer/PlainTextRenderer.svelte';
@@ -10,7 +10,6 @@
 	}
 
 	let { content, class: className = '' }: Props = $props();
-	
 </script>
 
 <div class={tw('rich-text', className)}>

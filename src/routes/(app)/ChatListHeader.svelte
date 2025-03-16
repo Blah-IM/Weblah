@@ -12,8 +12,6 @@
 
 	let { searchQuery = $bindable(''), isSearchFocused = $bindable() }: Props = $props();
 
-	let inputElement: HTMLInputElement = $state();
-
 	function onTapClear(e: MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -21,7 +19,7 @@
 	}
 </script>
 
-<header class="flex items-center justify-stretch gap-2 border-b border-ss-secondary p-2 shadow-xs">
+<header class="border-ss-secondary flex items-center justify-stretch gap-2 border-b p-2 shadow-xs">
 	<a
 		class={tw(
 			'transition-[opacity,transform] duration-200',
@@ -38,9 +36,8 @@
 		<input
 			type="search"
 			placeholder="Search"
-			class="w-full flex-1 bg-transparent text-sm leading-4 text-sf-primary focus:outline-hidden"
+			class="text-sf-primary w-full flex-1 bg-transparent text-sm leading-4 focus:outline-hidden"
 			bind:value={searchQuery}
-			bind:this={inputElement}
 			onfocus={() => {
 				isSearchFocused = true;
 			}}
