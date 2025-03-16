@@ -47,7 +47,7 @@
 		"svelte-boring-avatars": "^1.2.6",
 		"svelte-hero-icons": "^5.2.0",
 		"svelte-persisted-store": "^0.12.0",
-		"tailwind-merge": "^2.5.5",
+		"tailwind-merge": "^3.0.2",
 		"typewriter-editor": "^0.12.9",
 		"virtua": "^0.35.1",
 		"zod": "^3.24.2"
