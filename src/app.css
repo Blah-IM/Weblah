@@ -1,34 +1,77 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:not([data-weblah-color-scheme='light'] *) {
+      @slot;
+    }
+  }
+  &:is([data-weblah-color-scheme='dark'] *) {
+    @slot;
+  }
+}
+
+@theme {
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeafe;
+  --color-accent-200: #bfdbfe;
+  --color-accent-300: #93c5fd;
+  --color-accent-400: #60a5fa;
+  --color-accent-500: #3b82f6;
+  --color-accent-600: #2563eb;
+  --color-accent-700: #1d4ed8;
+  --color-accent-800: #1e40af;
+  --color-accent-900: #1e3a8a;
+  --color-accent-950: #172554;
+
+  --color-sb-overlay: var(--weblah-color-sb-overlay);
+  --color-sb-primary: var(--weblah-color-sb-primary);
+  --color-sb-secondary: var(--weblah-color-sb-secondary);
+  --color-sb-tertiary: var(--weblah-color-sb-tertiary);
+
+  --color-sf-primary: var(--weblah-color-sf-primary);
+  --color-sf-secondary: var(--weblah-color-sf-secondary);
+  --color-sf-tertiary: var(--weblah-color-sf-tertiary);
+
+  --color-ss-primary: var(--weblah-color-ss-primary);
+  --color-ss-secondary: var(--weblah-color-ss-secondary);
+}
+
+@utility rich-text {
+  @apply prose prose-slate max-w-none dark:prose-invert;
+  @apply prose-p:my-0 prose-p:leading-tight prose-code:before:content-[''] prose-code:after:content-[''];
+  @apply [&_span[data-weblah-brt=underline]]:underline;
+}
 
 @layer base {
 	.weblah-light-theme {
-		--weblah-color-sb-overlay: theme(colors.white);
-		--weblah-color-sb-primary: theme(colors.slate.50);
-		--weblah-color-sb-secondary: theme(colors.slate.100);
-		--weblah-color-sb-tertiary: theme(colors.slate.200);
+		--weblah-color-sb-overlay: var(--color-white);
+		--weblah-color-sb-primary: var(--color-slate-50);
+		--weblah-color-sb-secondary: var(--color-slate-100);
+		--weblah-color-sb-tertiary: var(--color-slate-200);
 
-		--weblah-color-sf-primary: theme(colors.slate.900);
-		--weblah-color-sf-secondary: theme(colors.slate.500);
-		--weblah-color-sf-tertiary: theme(colors.slate.400);
+		--weblah-color-sf-primary: var(--color-slate-900);
+		--weblah-color-sf-secondary: var(--color-slate-500);
+		--weblah-color-sf-tertiary: var(--color-slate-400);
 
-		--weblah-color-ss-primary: theme(colors.slate.300);
-		--weblah-color-ss-secondary: theme(colors.slate.300 / 60%);
+		--weblah-color-ss-primary: var(--color-slate-300);
+		--weblah-color-ss-secondary: --theme(--color-slate-300 / 60%);
 	}
 
 	.weblah-dark-theme {
-		--weblah-color-sb-overlay: theme(colors.slate.800);
-		--weblah-color-sb-primary: theme(colors.slate.900);
-		--weblah-color-sb-secondary: theme(colors.slate.950);
-		--weblah-color-sb-tertiary: theme(colors.black);
+		--weblah-color-sb-overlay: var(--color-slate-800);
+		--weblah-color-sb-primary: var(--color-slate-900);
+		--weblah-color-sb-secondary: var(--color-slate-950);
+		--weblah-color-sb-tertiary: var(--color-black);
 
-		--weblah-color-sf-primary: theme(colors.slate.100);
-		--weblah-color-sf-secondary: theme(colors.slate.400);
-		--weblah-color-sf-tertiary: theme(colors.slate.500);
+		--weblah-color-sf-primary: var(--color-slate-100);
+		--weblah-color-sf-secondary: var(--color-slate-400);
+		--weblah-color-sf-tertiary: var(--color-slate-500);
 
-		--weblah-color-ss-primary: theme(colors.slate.700);
-		--weblah-color-ss-secondary: theme(colors.slate.700 / 60%);
+		--weblah-color-ss-primary: var(--color-slate-700);
+		--weblah-color-ss-secondary: --theme(--color-slate-700 / 60%);
 	}
 
 	:root {
@@ -47,13 +90,5 @@
 		:is([data-weblah-color-scheme='light'] *) {
 			@apply weblah-light-theme;
 		}
-	}
-}
-
-@layer utilities {
-	.rich-text {
-		@apply prose prose-slate max-w-none dark:prose-invert;
-		@apply prose-p:my-0 prose-p:leading-tight prose-code:before:content-[''] prose-code:after:content-[''];
-		@apply [&_span[data-weblah-brt=underline]]:underline;
 	}
 }

@@ -89,7 +89,7 @@
 				bind:value={name}
 				placeholder="Your Name"
 				disabled={isBusy}
-				class="ms-3 flex-1 bg-transparent text-lg leading-loose caret-accent-500 outline-none placeholder:opacity-50"
+				class="ms-3 flex-1 bg-transparent text-lg leading-loose caret-accent-500 outline-hidden placeholder:opacity-50"
 			/>
 		</GroupedListItem>
 	</GroupedListSection>

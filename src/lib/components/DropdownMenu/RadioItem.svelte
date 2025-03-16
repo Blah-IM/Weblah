@@ -8,7 +8,7 @@
 </script>
 
 <DropdownMenu.RadioItem
-	class="flex cursor-default items-center gap-1 rounded px-1.5 py-0.5 text-sf-primary transition-colors duration-200 hover:bg-accent-50 dark:hover:bg-white/5"
+	class="flex cursor-default items-center gap-1 rounded-sm px-1.5 py-0.5 text-sf-primary transition-colors duration-200 hover:bg-accent-50 dark:hover:bg-white/5"
 	{value}
 	{...$$props}
 >

@@ -13,7 +13,7 @@
 	<span class="sr-only">{account.profile.signee.payload.name}</span>
 {:else}
 	<div
-		class="box-border size-[--weblah-profile-pic-size] rounded-full border-2 border-dashed border-ss-primary"
+		class="box-border size-(--weblah-profile-pic-size) rounded-full border-2 border-dashed border-ss-primary"
 		style:--weblah-profile-pic-size={`${size}px`}
 		aria-hidden
 	/>

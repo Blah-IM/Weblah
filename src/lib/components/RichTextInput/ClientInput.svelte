@@ -50,7 +50,7 @@
 </script>
 
 <div
-	class="rich-text relative w-full outline-none before:absolute before:hidden before:leading-tight before:opacity-50 before:content-[attr(data-weblah-placeholder)] data-[weblah-is-empty]:before:block"
+	class="rich-text relative w-full outline-hidden before:absolute before:hidden before:leading-tight before:opacity-50 before:content-[attr(data-weblah-placeholder)] data-weblah-is-empty:before:block"
 	use:asRoot={editor}
 	data-weblah-is-empty={!delta || (delta.ops.length === 1 && delta.ops[0].insert === '\n')
 		? 'true'

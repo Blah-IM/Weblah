@@ -5,7 +5,7 @@
 		</h3>
 	{/if}
 	<div
-		class="divide-y-[0.5px] divide-ss-secondary overflow-hidden rounded-lg border-[0.5px] border-ss-secondary bg-sb-primary shadow-sm"
+		class="divide-y-[0.5px] divide-ss-secondary overflow-hidden rounded-lg border-[0.5px] border-ss-secondary bg-sb-primary shadow-xs"
 	>
 		<slot />
 	</div>

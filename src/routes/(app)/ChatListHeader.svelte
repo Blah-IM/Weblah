@@ -17,7 +17,7 @@
 	}
 </script>
 
-<header class="flex items-center justify-stretch gap-2 border-b border-ss-secondary p-2 shadow-sm">
+<header class="flex items-center justify-stretch gap-2 border-b border-ss-secondary p-2 shadow-xs">
 	<a
 		class={tw(
 			'transition-[opacity,transform] duration-200',
@@ -34,7 +34,7 @@
 		<input
 			type="search"
 			placeholder="Search"
-			class="w-full flex-1 bg-transparent text-sm leading-4 text-sf-primary focus:outline-none"
+			class="w-full flex-1 bg-transparent text-sm leading-4 text-sf-primary focus:outline-hidden"
 			bind:value={searchQuery}
 			bind:this={inputElement}
 			on:focus={() => {
