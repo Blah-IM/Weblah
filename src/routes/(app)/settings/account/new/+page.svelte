@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { currentAccountStore, openAccountStore } from '$lib/accounts/accountStore';
 	import Button from '$lib/components/Button.svelte';
@@ -12,6 +13,7 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import ProfilePicture from '$lib/components/ProfilePicture.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
+	import Link from '$lib/components/Link.svelte';
 	import type { BlahProfile } from '@blah-im/core/identity';
 	import { onMount } from 'svelte';
 	import type { Delta, Editor } from 'typewriter-editor';
@@ -22,6 +24,7 @@
 	let plainText: string = '';
 	let password: string = '';
 	let repeatPassword: string = '';
+	let identityServer: string = 'other.blue';
 
 	let isBusy: boolean = false;
 
@@ -37,6 +40,7 @@
 
 	$: passwordMatch = password === repeatPassword;
 	$: canCreate = name.length > 0 && password.length > 0 && passwordMatch;
+	$: customize = $page.url.hash === '#customize';
 
 	onMount(() => {
 		const bioPlaceholderRotateRef = setInterval(() => {
@@ -127,4 +131,31 @@
 			{/if}
 		</div>
 	</GroupedListSection>
+	{#if customize}
+		<GroupedListSection>
+			<h4 slot="header">Identity Service</h4>
+			<GroupedListInputItem>
+				Initial Service
+				<input type="text" bind:value={identityServer} />
+			</GroupedListInputItem>
+			<div slot="footer" class="space-y-1">
+				<p>
+					Your profile is stored and served to other users on the identity service.
+					<Link href="/" variant="secondary">Learn more about identity services...</Link>
+				</p>
+				<p>You can add, replace or remove identity services later in account settings.</p>
+			</div>
+		</GroupedListSection>
+	{/if}
+	<div class="px-8 text-sm text-sf-tertiary">
+		<p>
+			By creating an account, you agree to Terms of Service and Privacy Policy of
+			<em>{identityServer}</em>, which stores and serve your public profile to other users.
+			{#if customize}
+				<Link href="#">Use default</Link>
+			{:else}
+				<Link href="#customize">Customize...</Link>
+			{/if}
+		</p>
+	</div>
 </GroupedListContainer>
