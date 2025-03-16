@@ -3,9 +3,9 @@
 	import { deltaToBlahRichText } from '$lib/richText';
 	import type { Delta } from 'typewriter-editor';
 
-	let delta: Delta;
+	let delta: Delta = $state();
 
-	$: brt = delta ? deltaToBlahRichText(delta) : null;
+	let brt = $derived(delta ? deltaToBlahRichText(delta) : null);
 </script>
 
 <RichTextInput bind:delta class="m-4 max-h-32">

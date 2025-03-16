@@ -5,10 +5,10 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { Delta, Editor } from 'typewriter-editor';
 
-	let editor: Editor | undefined;
-	let delta: Delta;
-	let plainText: string = '';
-	let form: HTMLFormElement | null = null;
+	let editor: Editor | undefined = $state();
+	let delta: Delta | undefined = $state();
+	let plainText: string = $state('');
+	let form: HTMLFormElement | null = $state(null);
 
 	const dispatch = createEventDispatcher<{ sendMessage: BlahRichText }>();
 
@@ -17,8 +17,10 @@
 		form?.requestSubmit();
 	}
 
-	async function submit() {
-		if (plainText.trim() === '') return;
+	async function submit(event: SubmitEvent) {
+		event.preventDefault();
+
+		if (plainText.trim() === '' || !delta) return;
 
 		const brt = deltaToBlahRichText(delta);
 		dispatch('sendMessage', brt);
@@ -28,9 +30,9 @@
 </script>
 
 <form
-	class="flex w-full items-end gap-2 border-t border-ss-secondary bg-sb-primary p-2 shadow-xs"
+	class="border-ss-secondary bg-sb-primary flex w-full items-end gap-2 border-t p-2 shadow-xs"
 	bind:this={form}
-	on:submit|preventDefault={submit}
+	onsubmit={submit}
 >
 	<Button class="p-1.5">
 		<svg

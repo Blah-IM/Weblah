@@ -13,7 +13,7 @@
 	import { flip } from 'svelte/animate';
 	import { blur, scale } from 'svelte/transition';
 
-	let accountStore: AccountStore;
+	let accountStore: AccountStore = $state();
 
 	onMount(() => {
 		openAccountStore().then((store) => {

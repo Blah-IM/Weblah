@@ -7,6 +7,8 @@
 
 <GroupedListContainer>
 	<GroupedListSection>
-		<p slot="footer">New here? <a class="text-accent-500" href="new">Create a new account</a>.</p>
+		{#snippet footer()}
+				<p >New here? <a class="text-accent-500" href="new">Create a new account</a>.</p>
+			{/snippet}
 	</GroupedListSection>
 </GroupedListContainer>

@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { tw } from '$lib/tw';
 
-	export let href: string;
-	export let variant: 'primary' | 'secondary' = 'primary';
+	interface Props {
+		href: string;
+		variant?: 'primary' | 'secondary';
+		children?: import('svelte').Snippet;
+	}
+
+	let { href, variant = 'primary', children }: Props = $props();
 </script>
 
 <a
@@ -12,5 +17,5 @@
 		variant === 'primary'
 			? 'text-accent-600 dark:text-accent-500'
 			: 'text-accent-400 dark:text-accent-500'
-	)}><slot /></a
+	)}>{@render children?.()}</a
 >

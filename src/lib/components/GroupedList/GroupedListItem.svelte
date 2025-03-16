@@ -1,10 +1,23 @@
 <script lang="ts">
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { tw } from '$lib/tw';
 	import { Icon, type IconSource } from 'svelte-hero-icons';
 
-	export let href: string | undefined = undefined;
-	export let icon: IconSource | undefined = undefined;
-	export let selected: boolean = false;
+	interface Props {
+		href?: string | undefined;
+		icon?: IconSource | undefined;
+		selected?: boolean;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		href = undefined,
+		icon = undefined,
+		selected = false,
+		children
+	}: Props = $props();
 </script>
 
 <svelte:element
@@ -16,7 +29,7 @@
 	)}
 	tabindex="0"
 	role="button"
-	on:click
+	onclick={bubble('click')}
 >
 	{#if icon}
 		<Icon
@@ -25,5 +38,5 @@
 			mini
 		/>
 	{/if}
-	<slot />
+	{@render children?.()}
 </svelte:element>

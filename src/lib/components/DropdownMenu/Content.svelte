@@ -4,9 +4,15 @@
 	import { expoOut } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
 
-	interface $$Props extends DropdownMenuContentProps {}
-	let className: $$Props['class'] = '';
-	export { className as class };
+	
+	interface Props {
+		class?: $$Props['class'];
+		children?: import('svelte').Snippet;
+		[key: string]: any
+	}
+
+	let { class: className = '', children, ...rest }: Props = $props();
+	
 </script>
 
 <DropdownMenu.Content
@@ -17,7 +23,7 @@
 	sideOffset={4}
 	transition={scale}
 	transitionConfig={{ start: 0.96, duration: 300, easing: expoOut }}
-	{...$$restProps}
+	{...rest}
 >
-	<slot />
+	{@render children?.()}
 </DropdownMenu.Content>

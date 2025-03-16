@@ -3,17 +3,21 @@
 	import { DropdownMenu } from 'bits-ui';
 	import { Check, Icon } from 'svelte-hero-icons';
 
-	type $$Props = DropdownMenuRadioItemProps;
-	export let value: string;
+	interface Props extends DropdownMenuRadioItemProps {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children: componentChildren, ...props }: Props = $props();
 </script>
 
 <DropdownMenu.RadioItem
-	class="flex cursor-default items-center gap-1 rounded-sm px-1.5 py-0.5 text-sf-primary transition-colors duration-200 hover:bg-accent-50 dark:hover:bg-white/5"
-	{value}
-	{...$$props}
+	class="text-sf-primary hover:bg-accent-50 flex cursor-default items-center gap-1 rounded-sm px-1.5 py-0.5 transition-colors duration-200 dark:hover:bg-white/5"
+	{...props}
 >
-	<DropdownMenu.RadioIndicator class="relative size-4">
-		<Icon src={Check} class="size-full" micro />
-	</DropdownMenu.RadioIndicator>
-	<slot />
+	{#snippet children(itemProps)}
+		{#if itemProps.checked}
+			<Icon src={Check} class="size-full" micro />
+		{/if}
+		{@render componentChildren?.()}
+	{/snippet}
 </DropdownMenu.RadioItem>

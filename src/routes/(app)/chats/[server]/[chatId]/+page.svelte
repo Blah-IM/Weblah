@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { page } from '$app/stores';
 	import { BlahChatServerConnection } from '$lib/blah/connection/chatServer';
 	import { browser } from '$app/environment';
@@ -7,22 +9,22 @@
 	import ChatPage from './ChatPage.svelte';
 	import { useChat } from '$lib/chat';
 
-	$: roomId = $page.params.chatId;
+	let roomId = $derived($page.params.chatId);
 
-	let serverEndpoint: string = '';
-	$: {
+	let serverEndpoint: string = $state('');
+	run(() => {
 		const endpointString = decodeURIComponent($page.params.server);
 		serverEndpoint = endpointString.startsWith('http')
 			? endpointString
 			: `https://${endpointString}`;
-	}
+	});
 
-	let server: BlahChatServerConnection | null;
-	$: {
+	let server: BlahChatServerConnection | null = $state();
+	run(() => {
 		if (browser) {
 			server = chatServerConnectionPool.getConnection(serverEndpoint);
 		}
-	}
+	});
 </script>
 
 <div class="flex h-full w-full flex-col items-center justify-center">

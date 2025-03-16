@@ -5,10 +5,14 @@
 	import { tw } from '$lib/tw';
 	import CurrentAccountPicture from './CurrentAccountPicture.svelte';
 
-	export let searchQuery: string = '';
-	export let isSearchFocused: boolean;
+	interface Props {
+		searchQuery?: string;
+		isSearchFocused: boolean;
+	}
 
-	let inputElement: HTMLInputElement;
+	let { searchQuery = $bindable(''), isSearchFocused = $bindable() }: Props = $props();
+
+	let inputElement: HTMLInputElement = $state();
 
 	function onTapClear(e: MouseEvent) {
 		e.preventDefault();
@@ -37,10 +41,10 @@
 			class="w-full flex-1 bg-transparent text-sm leading-4 text-sf-primary focus:outline-hidden"
 			bind:value={searchQuery}
 			bind:this={inputElement}
-			on:focus={() => {
+			onfocus={() => {
 				isSearchFocused = true;
 			}}
-			on:blur={(e) => {
+			onblur={(e) => {
 				// If the related target is an anchor element, trigger the click as the user is trying to navigate
 				if (
 					e.relatedTarget instanceof HTMLAnchorElement ||
@@ -57,7 +61,7 @@
 				'-mx-2 -my-1.5 flex size-8 cursor-text items-center justify-center text-slate-300 opacity-0 transition-[opacity,transform] duration-200 dark:text-slate-500',
 				isSearchFocused && 'translate-x-full cursor-default opacity-100'
 			)}
-			on:click={onTapClear}
+			onclick={onTapClear}
 		>
 			<Icon src={XCircle} class="size-4" mini />
 			<span class="sr-only">Clear</span>

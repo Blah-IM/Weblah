@@ -1,24 +1,37 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { Delta, Editor, asRoot, h } from 'typewriter-editor';
 	import { keyboardSubmit } from './keyboardSubmitModule';
 
-	export let delta: Delta = new Delta();
-	export let plainText: string | undefined = undefined;
-	export let placeholder: string = '';
-	export let keyboardSubmitMethod: 'enter' | 'shiftEnter' | undefined = undefined;
+	interface Props {
+		delta?: Delta;
+		plainText?: string | undefined;
+		placeholder?: string;
+		keyboardSubmitMethod?: 'enter' | 'shiftEnter' | undefined;
+		onKeyboardSubmit?: () => void;
+		children?: import('svelte').Snippet;
+	}
 
-	const dispatch = createEventDispatcher<{
-		keyboardSubmit: void;
-	}>();
+	let {
+		delta = $bindable(new Delta()),
+		plainText = $bindable(undefined),
+		placeholder = '',
+		keyboardSubmitMethod = undefined,
+		onKeyboardSubmit,
+		children
+	}: Props = $props();
 
-	let editor: Editor;
+	let editor: Editor = $state(initEditor());
 
 	function initEditor() {
 		const modules = keyboardSubmitMethod
-			? { keyboardSubmit: keyboardSubmit(() => dispatch('keyboardSubmit'), keyboardSubmitMethod) }
+			? {
+					keyboardSubmit: keyboardSubmit(
+						() => onKeyboardSubmit && onKeyboardSubmit(),
+						keyboardSubmitMethod
+					)
+				}
 			: undefined;
-		editor = new Editor({ modules });
+		const editor = new Editor({ modules });
 		editor.typeset.formats.add({
 			name: 'underline',
 			selector: 'span[data-weblah-brt=underline]',
@@ -41,12 +54,20 @@
 			delta = editor.getDelta();
 			if (typeof plainText === 'string') plainText = editor.getText();
 		});
+
+		return editor;
 	}
 
-	$: if (keyboardSubmitMethod || typeof keyboardSubmitMethod === 'undefined') initEditor();
+	$effect.pre(() => {
+		if (keyboardSubmitMethod || typeof keyboardSubmitMethod === 'undefined') editor = initEditor();
+	});
 
-	$: editor.setDelta(delta ?? new Delta());
-	$: if (typeof plainText === 'string' && plainText !== editor.getText()) editor.setText(plainText);
+	$effect.pre(() => {
+		editor.setDelta(delta ?? new Delta());
+	});
+	$effect.pre(() => {
+		if (typeof plainText === 'string' && plainText !== editor.getText()) editor.setText(plainText);
+	});
 </script>
 
 <div
@@ -59,5 +80,5 @@
 	role="textbox"
 	tabindex="0"
 >
-	<slot />
+	{@render children?.()}
 </div>

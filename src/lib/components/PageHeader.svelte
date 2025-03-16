@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { tw } from '$lib/tw';
 
-	let className = '';
-	export { className as class };
+	interface Props {
+		class?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let { class: className = '', children }: Props = $props();
+	
 </script>
 
 <header
@@ -11,5 +16,5 @@
 		className
 	)}
 >
-	<slot />
+	{@render children?.()}
 </header>

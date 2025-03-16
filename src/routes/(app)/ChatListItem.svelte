@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { AvatarBeam } from 'svelte-boring-avatars';
 
 	import { formatMessageDate, formatUnreadCount } from '$lib/formatters';
@@ -8,15 +10,19 @@
 	import { page } from '$app/stores';
 	import { tw } from '$lib/tw';
 
-	export let chat: Chat;
-
-	let urlSafeEndpoint: string;
-	$: {
-		const url = new URL(chat.server);
-		urlSafeEndpoint = encodeURIComponent(url.hostname + url.pathname);
+	interface Props {
+		chat: Chat;
 	}
 
-	$: isSelected = $page.params.chatId === chat.id;
+	let { chat }: Props = $props();
+
+	let urlSafeEndpoint: string = $state();
+	run(() => {
+		const url = new URL(chat.server);
+		urlSafeEndpoint = encodeURIComponent(url.hostname + url.pathname);
+	});
+
+	let isSelected = $derived($page.params.chatId === chat.id);
 </script>
 
 <li

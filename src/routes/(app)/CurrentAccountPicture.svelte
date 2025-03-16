@@ -7,9 +7,13 @@
 	import ProfilePicture from '$lib/components/ProfilePicture.svelte';
 	import { onMount } from 'svelte';
 
-	export let size: number = 32;
+	interface Props {
+		size?: number;
+	}
 
-	let accountStore: AccountStore;
+	let { size = 32 }: Props = $props();
+
+	let accountStore: AccountStore = $state();
 
 	onMount(() => {
 		openAccountStore().then((store) => {

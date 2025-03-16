@@ -11,8 +11,12 @@
 	import type { BlahRichText } from '$lib/richText';
 	import type { MessageSection } from '$lib/chat';
 
-	export let info: Readable<Chat>;
-	export let sectionedMessages: Readable<MessageSection[]>;
+	interface Props {
+		info: Readable<Chat>;
+		sectionedMessages: Readable<MessageSection[]>;
+	}
+
+	let { info, sectionedMessages }: Props = $props();
 
 	interface $$Events {
 		sendMessage: CustomEvent<BlahRichText>;

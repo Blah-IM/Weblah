@@ -2,10 +2,15 @@
 	import { tw } from '$lib/tw';
 	import { patterns, type PatternName } from './BgPattern';
 
-	export let pattern: PatternName = 'rain';
 
-	let className: string = '';
-	export { className as class };
+	interface Props {
+		pattern?: PatternName;
+		class?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let { pattern = 'rain', class: className = '', children }: Props = $props();
+	
 </script>
 
 <div
@@ -15,5 +20,5 @@
 	)}
 	style:--pattern-image={`url("${patterns[pattern]}")`}
 >
-	<slot />
+	{@render children?.()}
 </div>

@@ -1,5 +1,9 @@
 <script lang="ts">
-	export let title: string = 'Color Palette';
+	interface Props {
+		title?: string;
+	}
+
+	let { title = 'Color Palette' }: Props = $props();
 </script>
 
 <div class="rounded-xl bg-sb-secondary p-4 text-sf-primary">

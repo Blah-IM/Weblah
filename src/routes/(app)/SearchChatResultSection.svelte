@@ -3,8 +3,12 @@
 
 	import ChatListItem from './ChatListItem.svelte';
 
-	export let name: string;
-	export let results: Chat[];
+	interface Props {
+		name: string;
+		results: Chat[];
+	}
+
+	let { name, results }: Props = $props();
 </script>
 
 <li>

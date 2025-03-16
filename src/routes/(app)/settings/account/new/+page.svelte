@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { currentAccountStore, openAccountStore } from '$lib/accounts/accountStore';
 	import Button from '$lib/components/Button.svelte';
@@ -18,17 +18,17 @@
 	import { onMount } from 'svelte';
 	import type { Delta, Editor } from 'typewriter-editor';
 
-	let name: string = '';
-	let editor: Editor | undefined;
-	let delta: Delta;
-	let plainText: string = '';
-	let password: string = '';
-	let repeatPassword: string = '';
-	let identityServer: string = 'other.blue';
+	let name: string = $state('');
+	let editor: Editor | undefined = $state();
+	let delta: Delta | undefined = $state();
+	let plainText: string = $state('');
+	let password: string = $state('');
+	let repeatPassword: string = $state('');
+	let identityServer: string = $state('other.blue');
 
-	let isBusy: boolean = false;
+	let isBusy: boolean = $state(false);
 
-	let bioPlaceholder = 'Introduce yourself.';
+	let bioPlaceholder = $state('Introduce yourself.');
 
 	const bioPlaceholders = [
 		'a 23 yo. designer from Tokyo.',
@@ -38,9 +38,9 @@
 		'a 28 yo. writer from London.'
 	];
 
-	$: passwordMatch = password === repeatPassword;
-	$: canCreate = name.length > 0 && password.length > 0 && passwordMatch;
-	$: customize = $page.url.hash === '#customize';
+	let passwordMatch = $derived(password === repeatPassword);
+	let canCreate = $derived(name.length > 0 && password.length > 0 && passwordMatch);
+	let customize = $derived(page.url.hash === '#customize');
 
 	onMount(() => {
 		const bioPlaceholderRotateRef = setInterval(() => {
@@ -76,7 +76,7 @@
 	{#if isBusy}
 		<LoadingIndicator class="size-4" />
 	{:else}
-		<Button variant="primary" disabled={!canCreate} on:click={createAccount}>Create</Button>
+		<Button variant="primary" disabled={!canCreate} onclick={createAccount}>Create</Button>
 	{/if}
 </PageHeader>
 
@@ -89,13 +89,15 @@
 				bind:value={name}
 				placeholder="Your Name"
 				disabled={isBusy}
-				class="ms-3 flex-1 bg-transparent text-lg leading-loose caret-accent-500 outline-hidden placeholder:opacity-50"
+				class="caret-accent-500 ms-3 flex-1 bg-transparent text-lg leading-loose outline-hidden placeholder:opacity-50"
 			/>
 		</GroupedListItem>
 	</GroupedListSection>
 
 	<GroupedListSection>
-		<h4 slot="header">Bio</h4>
+		{#snippet header()}
+			<h4>Bio</h4>
+		{/snippet}
 		<RichTextInput
 			class="p-4 shadow-none ring-0"
 			bind:editor
@@ -103,11 +105,15 @@
 			bind:plainText
 			placeholder={bioPlaceholder}
 		/>
-		<p slot="footer">Introduce yourself. This will be public for everyone to see.</p>
+		{#snippet footer()}
+			<p>Introduce yourself. This will be public for everyone to see.</p>
+		{/snippet}
 	</GroupedListSection>
 
 	<GroupedListSection>
-		<h4 slot="header">Security</h4>
+		{#snippet header()}
+			<h4>Security</h4>
+		{/snippet}
 		<GroupedListInputItem>
 			Password
 			<input type="password" bind:value={password} placeholder="Password" disabled={isBusy} />
@@ -121,33 +127,39 @@
 				disabled={isBusy}
 			/>
 		</GroupedListInputItem>
-		<div slot="footer" class="space-y-1">
-			<p>
-				Sensitive actions like signing in on new devices require your password. Make sure it's
-				unique and secure. You'll lose access to your account if you forget it.
-			</p>
-			{#if !passwordMatch && repeatPassword}
-				<p><strong>Passwords do not match.</strong></p>
-			{/if}
-		</div>
+		{#snippet footer()}
+			<div class="space-y-1">
+				<p>
+					Sensitive actions like signing in on new devices require your password. Make sure it's
+					unique and secure. You'll lose access to your account if you forget it.
+				</p>
+				{#if !passwordMatch && repeatPassword}
+					<p><strong>Passwords do not match.</strong></p>
+				{/if}
+			</div>
+		{/snippet}
 	</GroupedListSection>
 	{#if customize}
 		<GroupedListSection>
-			<h4 slot="header">Identity Service</h4>
+			{#snippet header()}
+				<h4>Identity Service</h4>
+			{/snippet}
 			<GroupedListInputItem>
 				Initial Service
 				<input type="text" bind:value={identityServer} />
 			</GroupedListInputItem>
-			<div slot="footer" class="space-y-1">
-				<p>
-					Your profile is stored and served to other users on the identity service.
-					<Link href="/" variant="secondary">Learn more about identity services...</Link>
-				</p>
-				<p>You can add, replace or remove identity services later in account settings.</p>
-			</div>
+			{#snippet footer()}
+				<div class="space-y-1">
+					<p>
+						Your profile is stored and served to other users on the identity service.
+						<Link href="/" variant="secondary">Learn more about identity services...</Link>
+					</p>
+					<p>You can add, replace or remove identity services later in account settings.</p>
+				</div>
+			{/snippet}
 		</GroupedListSection>
 	{/if}
-	<div class="px-8 text-sm text-sf-tertiary">
+	<div class="text-sf-tertiary px-8 text-sm">
 		<p>
 			By creating an account, you agree to Terms of Service and Privacy Policy of
 			<em>{identityServer}</em>, which stores and serve your public profile to other users.

@@ -4,14 +4,27 @@
 	import InputFrame from '$lib/components/InputFrame.svelte';
 	import { tw } from '$lib/tw';
 
-	export let delta: Delta | null = null;
-	export let plainText: string | undefined = undefined;
-	export let keyboardSubmitMethod: 'enter' | 'shiftEnter' | undefined = undefined;
-	export let placeholder: string = '';
-	export let editor: Editor | undefined;
 
-	let className = '';
-	export { className as class };
+	interface Props {
+		delta?: Delta | null;
+		plainText?: string | undefined;
+		keyboardSubmitMethod?: 'enter' | 'shiftEnter' | undefined;
+		placeholder?: string;
+		editor: Editor | undefined;
+		class?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		delta = $bindable(null),
+		plainText = $bindable(undefined),
+		keyboardSubmitMethod = undefined,
+		placeholder = '',
+		editor = $bindable(),
+		class: className = '',
+		children
+	}: Props = $props();
+	
 
 	const loadClientComponent = async () => {
 		if (!browser) return;
@@ -26,8 +39,7 @@
 			<p>{placeholder}</p>
 		</div>
 	{:then Input}
-		<svelte:component
-			this={Input}
+		<Input
 			bind:delta
 			bind:plainText
 			{placeholder}
@@ -35,7 +47,7 @@
 			{keyboardSubmitMethod}
 			on:keyboardSubmit
 		>
-			<slot />
-		</svelte:component>
+			{@render children?.()}
+		</Input>
 	{/await}
 </InputFrame>

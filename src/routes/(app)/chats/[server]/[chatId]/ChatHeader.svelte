@@ -5,8 +5,12 @@
 	import { AvatarBeam } from 'svelte-boring-avatars';
 	import { ChevronLeft, Icon } from 'svelte-hero-icons';
 
-	export let info: Chat;
-	export let outsideUnreadCount = 0;
+	interface Props {
+		info: Chat;
+		outsideUnreadCount?: number;
+	}
+
+	let { info, outsideUnreadCount = 0 }: Props = $props();
 </script>
 
 <div

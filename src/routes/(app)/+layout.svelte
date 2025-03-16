@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
 	import { onNavigate } from '$app/navigation';
 	import ChatList from './ChatList.svelte';
 	import SettingsList from './settings/SettingsList.svelte';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition || navigation.from?.url.href === navigation.to?.url.href)
@@ -16,10 +21,10 @@
 		});
 	});
 
-	$: isSettings = $page.route.id?.startsWith('/(app)/settings') ?? true;
-	$: mainVisible =
-		!!$page.params.chatId ||
-		(isSettings && !$page.route.id?.startsWith('/(app)/settings/_mobile_empty'));
+	let isSettings = $derived($page.route.id?.startsWith('/(app)/settings') ?? true);
+	let mainVisible =
+		$derived(!!$page.params.chatId ||
+		(isSettings && !$page.route.id?.startsWith('/(app)/settings/_mobile_empty')));
 </script>
 
 <div
@@ -38,10 +43,10 @@
 		<main
 			class="absolute inset-0 w-full bg-sb-secondary shadow-lg [view-transition-name:main] sm:relative sm:flex-1 sm:shadow-none"
 		>
-			<slot></slot>
+			{@render children?.()}
 		</main>
 	{:else}
-		<div class="hidden flex-1 sm:block"><slot /></div>
+		<div class="hidden flex-1 sm:block">{@render children?.()}</div>
 	{/if}
 </div>
 

@@ -45,35 +45,35 @@
   @apply [&_span[data-weblah-brt=underline]]:underline;
 }
 
+@utility weblah-light-theme {
+ 	--weblah-color-sb-overlay: var(--color-white);
+	--weblah-color-sb-primary: var(--color-slate-50);
+	--weblah-color-sb-secondary: var(--color-slate-100);
+	--weblah-color-sb-tertiary: var(--color-slate-200);
+
+	--weblah-color-sf-primary: var(--color-slate-900);
+	--weblah-color-sf-secondary: var(--color-slate-500);
+	--weblah-color-sf-tertiary: var(--color-slate-400);
+
+	--weblah-color-ss-primary: var(--color-slate-300);
+	--weblah-color-ss-secondary: --theme(--color-slate-300 / 60%);
+}
+
+@utility weblah-dark-theme {
+  --weblah-color-sb-overlay: var(--color-slate-800);
+	--weblah-color-sb-primary: var(--color-slate-900);
+	--weblah-color-sb-secondary: var(--color-slate-950);
+	--weblah-color-sb-tertiary: var(--color-black);
+
+	--weblah-color-sf-primary: var(--color-slate-100);
+	--weblah-color-sf-secondary: var(--color-slate-400);
+	--weblah-color-sf-tertiary: var(--color-slate-500);
+
+	--weblah-color-ss-primary: var(--color-slate-700);
+	--weblah-color-ss-secondary: --theme(--color-slate-700 / 60%);
+}
+
 @layer base {
-	.weblah-light-theme {
-		--weblah-color-sb-overlay: var(--color-white);
-		--weblah-color-sb-primary: var(--color-slate-50);
-		--weblah-color-sb-secondary: var(--color-slate-100);
-		--weblah-color-sb-tertiary: var(--color-slate-200);
-
-		--weblah-color-sf-primary: var(--color-slate-900);
-		--weblah-color-sf-secondary: var(--color-slate-500);
-		--weblah-color-sf-tertiary: var(--color-slate-400);
-
-		--weblah-color-ss-primary: var(--color-slate-300);
-		--weblah-color-ss-secondary: --theme(--color-slate-300 / 60%);
-	}
-
-	.weblah-dark-theme {
-		--weblah-color-sb-overlay: var(--color-slate-800);
-		--weblah-color-sb-primary: var(--color-slate-900);
-		--weblah-color-sb-secondary: var(--color-slate-950);
-		--weblah-color-sb-tertiary: var(--color-black);
-
-		--weblah-color-sf-primary: var(--color-slate-100);
-		--weblah-color-sf-secondary: var(--color-slate-400);
-		--weblah-color-sf-tertiary: var(--color-slate-500);
-
-		--weblah-color-ss-primary: var(--color-slate-700);
-		--weblah-color-ss-secondary: --theme(--color-slate-700 / 60%);
-	}
-
 	:root {
 		@apply weblah-light-theme;
 	}

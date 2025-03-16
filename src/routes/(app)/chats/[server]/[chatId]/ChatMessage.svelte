@@ -3,9 +3,13 @@
 	import { tw } from '$lib/tw';
 	import type { Message } from '$lib/types';
 
-	export let message: Message;
-	export let showBubbleTail: boolean = true;
-	export let isMyself: boolean;
+	interface Props {
+		message: Message;
+		showBubbleTail?: boolean;
+		isMyself: boolean;
+	}
+
+	let { message, showBubbleTail = true, isMyself }: Props = $props();
 </script>
 
 <div class={tw('mb-1.5 flex items-end gap-2 px-2', isMyself && 'flex-row-reverse')}>

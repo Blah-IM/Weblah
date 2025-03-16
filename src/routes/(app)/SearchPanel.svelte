@@ -4,7 +4,11 @@
 	import ChatListItem from './ChatListItem.svelte';
 	import SearchChatResultSection from './SearchChatResultSection.svelte';
 
-	export let searchQuery: string;
+	interface Props {
+		searchQuery: string;
+	}
+
+	let { searchQuery }: Props = $props();
 
 	async function search(query: string) {
 		const results = await chatServerConnectionPool.searchManager.searchChats(query);

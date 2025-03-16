@@ -2,8 +2,12 @@
 	import type { Account } from '$lib/accounts/accountStore';
 	import { AvatarBeam } from 'svelte-boring-avatars';
 
-	export let account: Account | undefined;
-	export let size: number = 32;
+	interface Props {
+		account: Account | undefined;
+		size?: number;
+	}
+
+	let { account, size = 32 }: Props = $props();
 </script>
 
 {#if account}
@@ -13,9 +17,9 @@
 	<span class="sr-only">{account.profile.signee.payload.name}</span>
 {:else}
 	<div
-		class="box-border size-(--weblah-profile-pic-size) rounded-full border-2 border-dashed border-ss-primary"
+		class="border-ss-primary box-border size-(--weblah-profile-pic-size) rounded-full border-2 border-dashed"
 		style:--weblah-profile-pic-size={`${size}px`}
-		aria-hidden
-	/>
+		aria-hidden="true"
+	></div>
 	<span class="sr-only">Account Unavailable</span>
 {/if}

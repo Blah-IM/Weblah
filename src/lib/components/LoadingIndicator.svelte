@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { tw } from '$lib/tw';
 
-	let className = '';
-	export { className as class };
+	interface Props {
+		class?: string;
+	}
+
+	let { class: className = '' }: Props = $props();
+	
 </script>
 
 <div class={tw('loading-indicator relative inline-block size-5 [&>div]:bg-sf-tertiary', className)}>

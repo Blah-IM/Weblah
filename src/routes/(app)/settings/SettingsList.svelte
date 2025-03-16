@@ -15,8 +15,12 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import SettingsAccountSections from './SettingsAccountSections.svelte';
 
-	let className = '';
-	export { className as class };
+	interface Props {
+		class?: string;
+	}
+
+	let { class: className = '' }: Props = $props();
+	
 </script>
 
 <div

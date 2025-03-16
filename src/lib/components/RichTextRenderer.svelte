@@ -4,9 +4,13 @@
 	import RichTextSpan from './RichTextRenderer/RichTextSpan.svelte';
 	import PlainTextRenderer from './RichTextRenderer/PlainTextRenderer.svelte';
 
-	export let content: BlahRichText;
-	let className = '';
-	export { className as class };
+	interface Props {
+		content: BlahRichText;
+		class?: string;
+	}
+
+	let { content, class: className = '' }: Props = $props();
+	
 </script>
 
 <div class={tw('rich-text', className)}>
