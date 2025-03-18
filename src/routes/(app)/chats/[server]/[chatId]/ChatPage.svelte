@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Readable } from 'svelte/store';
 
-	import type { Chat, Message } from '$lib/types';
+	import type { Chat } from '$lib/types';
 	import BgPattern from '$lib/components/BgPattern.svelte';
 	import { currentKeyPair } from '$lib/keystore';
 
@@ -14,17 +14,14 @@
 	interface Props {
 		info: Readable<Chat>;
 		sectionedMessages: Readable<MessageSection[]>;
+		onSendMessage: (brt: BlahRichText) => void;
 	}
 
-	let { info, sectionedMessages }: Props = $props();
-
-	interface $$Events {
-		sendMessage: CustomEvent<BlahRichText>;
-	}
+	let { info, sectionedMessages, onSendMessage }: Props = $props();
 </script>
 
 <ChatHeader info={$info} outsideUnreadCount={263723} />
 <BgPattern class="w-full flex-1" pattern="charlieBrown">
 	<ChatHistory sectionedMessages={$sectionedMessages} mySenderId={$currentKeyPair?.id} />
 </BgPattern>
-<ChatInput on:sendMessage />
+<ChatInput {onSendMessage} />

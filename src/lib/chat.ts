@@ -1,6 +1,6 @@
 import { derived, readable, type Readable } from 'svelte/store';
 import type { BlahChatServerConnection } from './blah/connection/chatServer';
-import type { BlahRichText } from './richText';
+import type { BlahRichText } from '@blah-im/core/richText';
 import { messageFromBlah, type Chat, type Message, type User } from './types';
 import { BlahError } from './blah/connection/error';
 

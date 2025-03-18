@@ -4,27 +4,27 @@
 	import InputFrame from '$lib/components/InputFrame.svelte';
 	import { tw } from '$lib/tw';
 
-
 	interface Props {
-		delta?: Delta | null;
-		plainText?: string | undefined;
+		delta?: Delta;
+		plainText?: string;
 		keyboardSubmitMethod?: 'enter' | 'shiftEnter' | undefined;
+		onKeyboardSubmit?: () => void;
 		placeholder?: string;
-		editor: Editor | undefined;
+		editor?: Editor;
 		class?: string;
 		children?: import('svelte').Snippet;
 	}
 
 	let {
-		delta = $bindable(null),
+		delta = $bindable(undefined),
 		plainText = $bindable(undefined),
 		keyboardSubmitMethod = undefined,
+		onKeyboardSubmit,
 		placeholder = '',
 		editor = $bindable(),
 		class: className = '',
 		children
 	}: Props = $props();
-	
 
 	const loadClientComponent = async () => {
 		if (!browser) return;
@@ -38,16 +38,16 @@
 		<div class="rich-text opacity-50">
 			<p>{placeholder}</p>
 		</div>
-	{:then Input}
-		<Input
+	{:then ClientInput}
+		<ClientInput
 			bind:delta
 			bind:plainText
 			{placeholder}
 			bind:editor
 			{keyboardSubmitMethod}
-			on:keyboardSubmit
+			{onKeyboardSubmit}
 		>
 			{@render children?.()}
-		</Input>
+		</ClientInput>
 	{/await}
 </InputFrame>

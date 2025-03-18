@@ -4,6 +4,7 @@
 
 	interface Props {
 		delta?: Delta;
+		editor?: Editor;
 		plainText?: string | undefined;
 		placeholder?: string;
 		keyboardSubmitMethod?: 'enter' | 'shiftEnter' | undefined;
@@ -13,14 +14,13 @@
 
 	let {
 		delta = $bindable(new Delta()),
+		editor = $bindable(initEditor()),
 		plainText = $bindable(undefined),
 		placeholder = '',
 		keyboardSubmitMethod = undefined,
 		onKeyboardSubmit,
 		children
 	}: Props = $props();
-
-	let editor: Editor = $state(initEditor());
 
 	function initEditor() {
 		const modules = keyboardSubmitMethod

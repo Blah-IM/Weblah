@@ -1,9 +1,9 @@
 <script lang="ts">
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
-	import { deltaToBlahRichText } from '@blah-im/core/richText';
+	import { deltaToBlahRichText } from '$lib/richText';
 	import type { Delta } from 'typewriter-editor';
 
-	let delta: Delta = $state();
+	let delta: Delta | undefined = $state();
 
 	let brt = $derived(delta ? deltaToBlahRichText(delta) : null);
 </script>

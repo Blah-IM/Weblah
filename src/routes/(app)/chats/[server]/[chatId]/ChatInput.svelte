@@ -1,16 +1,20 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
-	import { deltaToBlahRichText, type BlahRichText } from '@blah-im/core/richText';
-	import { createEventDispatcher } from 'svelte';
+	import type { BlahRichText } from '@blah-im/core/richText';
+	import { deltaToBlahRichText } from '$lib/richText';
 	import type { Delta, Editor } from 'typewriter-editor';
+
+	let {
+		onSendMessage
+	}: {
+		onSendMessage: (message: BlahRichText) => void;
+	} = $props();
 
 	let editor: Editor | undefined = $state();
 	let delta: Delta | undefined = $state();
 	let plainText: string = $state('');
 	let form: HTMLFormElement | null = $state(null);
-
-	const dispatch = createEventDispatcher<{ sendMessage: BlahRichText }>();
 
 	function onKeyboardSubmit() {
 		editor?.select(null);
@@ -23,7 +27,7 @@
 		if (plainText.trim() === '' || !delta) return;
 
 		const brt = deltaToBlahRichText(delta);
-		dispatch('sendMessage', brt);
+		onSendMessage(brt);
 
 		plainText = '';
 	}
@@ -58,7 +62,7 @@
 		placeholder="Message"
 		class="max-h-40 flex-1"
 		keyboardSubmitMethod="enter"
-		on:keyboardSubmit={onKeyboardSubmit}
+		{onKeyboardSubmit}
 	/>
 	<Button class="p-1.5" variant="primary" type="submit">
 		<svg

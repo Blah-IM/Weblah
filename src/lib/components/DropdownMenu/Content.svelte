@@ -4,26 +4,26 @@
 	import { expoOut } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
 
-	
-	interface Props {
-		class?: $$Props['class'];
-		children?: import('svelte').Snippet;
-		[key: string]: any
+	interface Props extends DropdownMenuContentProps {
+		class?: string;
 	}
 
 	let { class: className = '', children, ...rest }: Props = $props();
-	
+
+	const fullClassName = tw(
+		'group border-ss-secondary bg-sb-overlay min-w-32 origin-top rounded-lg border p-1 shadow-lg',
+		className
+	);
 </script>
 
-<DropdownMenu.Content
-	class={tw(
-		'group min-w-32 origin-top rounded-lg border border-ss-secondary bg-sb-overlay p-1 shadow-lg',
-		className
-	)}
-	sideOffset={4}
-	transition={scale}
-	transitionConfig={{ start: 0.96, duration: 300, easing: expoOut }}
-	{...rest}
->
-	{@render children?.()}
+<DropdownMenu.Content class={fullClassName} sideOffset={4} forceMount {...rest}>
+	{#snippet child({ wrapperProps, props, open })}
+		{#if open}
+			<div {...wrapperProps}>
+				<div {...props} transition:scale={{ start: 0.96, duration: 300, easing: expoOut }}>
+					{@render children?.()}
+				</div>
+			</div>
+		{/if}
+	{/snippet}
 </DropdownMenu.Content>
