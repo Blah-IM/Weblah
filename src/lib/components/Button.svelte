@@ -22,7 +22,7 @@
 	this={href ? 'a' : 'button'}
 	{href}
 	class={tw(
-		'text-sf-secondary ring-ss-secondary inline-flex cursor-default items-center justify-center rounded-md px-2 py-1 shadow-xs ring-1',
+		'text-sf-secondary ring-ss-secondary inline-flex cursor-default items-center justify-center rounded-md px-2.5 py-1 shadow-xs ring-1',
 		'hover:ring-ss-primary font-normal transition-shadow duration-200 active:shadow-inner',
 		variant === 'primary' && [
 			'relative text-slate-50 ring-0 duration-200',
