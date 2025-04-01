@@ -52,8 +52,8 @@ class ChatServerConnectionPool {
 		this.connections.clear();
 	}
 
-	private async onKeyPairChange(encodedKeyPair: EncodedBlahKeyPair) {
-		this.keypair = await BlahKeyPair.fromEncoded(encodedKeyPair);
+	private async onKeyPairChange(encodedKeyPair: EncodedBlahKeyPair | null) {
+		this.keypair = encodedKeyPair ? await BlahKeyPair.fromEncoded(encodedKeyPair) : null;
 		for (const connection of this.connections.values()) {
 			connection.changeKeyPair(this.keypair);
 			connection.connect();
