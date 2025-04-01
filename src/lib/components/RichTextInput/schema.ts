@@ -3,7 +3,7 @@ import { nodes as basicNodes, marks as basicMarks } from 'prosemirror-schema-bas
 
 export const messageSchema = new Schema({
 	nodes: {
-		doc: { content: 'block' }, // For now we only support a single block
+		doc: { content: 'block+' },
 		paragragh: {
 			content: 'inline*'
 		},
