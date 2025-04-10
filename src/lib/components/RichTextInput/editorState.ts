@@ -2,21 +2,23 @@ import { EditorState, type Command } from 'prosemirror-state';
 import { history, undo, redo } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
-import type { Schema } from 'prosemirror-model';
+import type { Schema, Node } from 'prosemirror-model';
 
-import { messageSchema } from './schema';
-
-export type EditorConfiguration = {
+export type EditorStateConfiguration = {
+	initialDoc?: Node | string;
+	schema: Schema;
 	keyboardSubmitMethod?: 'enter' | 'shiftEnter' | undefined;
-	onKeyboardSubmit?: () => void;
+	onKeyboardSubmit?: (doc: Node) => void;
 };
 
-export function createEditorState(
-	{ keyboardSubmitMethod, onKeyboardSubmit }: EditorConfiguration,
-	schema: Schema = messageSchema
-) {
-	const submitCommand: Command = () => {
-		onKeyboardSubmit?.();
+export function createProseMirrorEditorState({
+	keyboardSubmitMethod,
+	onKeyboardSubmit,
+	initialDoc,
+	schema
+}: EditorStateConfiguration) {
+	const submitCommand: Command = (state) => {
+		onKeyboardSubmit?.(state.doc);
 		return true;
 	};
 	const newlineCommand: Command = baseKeymap.Enter;
@@ -32,15 +34,17 @@ export function createEditorState(
 	}
 
 	const state = EditorState.create({
+		doc: typeof initialDoc === 'string' ? schema.text(initialDoc) : initialDoc,
 		schema,
 		plugins: [
 			history(),
 			keymap({
 				'Mod-z': undo,
 				'Mod-y': redo,
-				'Mod-Shift-z': redo
-			}),
-			keymap({ ...baseKeymap, ...submitOrNewlineKeyMap })
+				'Mod-Shift-z': redo,
+				...baseKeymap,
+				...submitOrNewlineKeyMap
+			})
 		]
 	});
 

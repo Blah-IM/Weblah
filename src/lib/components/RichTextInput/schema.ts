@@ -5,7 +5,8 @@ export const messageSchema = new Schema({
 	nodes: {
 		doc: { content: 'block+' },
 		paragragh: {
-			content: 'inline*'
+			content: 'inline*',
+			...basicNodes.paragraph
 		},
 		text: basicNodes.text
 	},

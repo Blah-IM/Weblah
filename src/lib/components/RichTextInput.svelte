@@ -1,30 +1,14 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import type { Delta, Editor } from 'typewriter-editor';
 	import InputFrame from '$lib/components/InputFrame.svelte';
+	import type { Props as ClientInputProps } from './RichTextInput/ClientInput.svelte';
 	import { tw } from '$lib/tw';
 
-	interface Props {
-		delta?: Delta;
-		plainText?: string;
-		keyboardSubmitMethod?: 'enter' | 'shiftEnter' | undefined;
-		onKeyboardSubmit?: () => void;
-		placeholder?: string;
-		editor?: Editor;
+	interface Props extends ClientInputProps {
 		class?: string;
-		children?: import('svelte').Snippet;
 	}
 
-	let {
-		delta = $bindable(undefined),
-		plainText = $bindable(undefined),
-		keyboardSubmitMethod = undefined,
-		onKeyboardSubmit,
-		placeholder = '',
-		editor = $bindable(),
-		class: className = '',
-		children
-	}: Props = $props();
+	let { class: className = '', placeholder, children, ...clientInputProps }: Props = $props();
 
 	const loadClientComponent = async () => {
 		if (!browser) return;
@@ -35,18 +19,15 @@
 
 <InputFrame class={tw('overflow-y-auto', className)}>
 	{#await loadClientComponent()}
-		<div class="rich-text opacity-50">
-			<p>{placeholder}</p>
+		<div class="rich-text">
+			{#if children}
+				{@render children()}
+			{:else}
+				<p class="opacity-50">{placeholder}</p>
+			{/if}
 		</div>
 	{:then ClientInput}
-		<ClientInput
-			bind:delta
-			bind:plainText
-			{placeholder}
-			bind:editor
-			{keyboardSubmitMethod}
-			{onKeyboardSubmit}
-		>
+		<ClientInput {placeholder} {...clientInputProps}>
 			{@render children?.()}
 		</ClientInput>
 	{/await}
