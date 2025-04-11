@@ -16,44 +16,26 @@
 	import Link from '$lib/components/Link.svelte';
 	import type { BlahProfile } from '@blah-im/core/identity';
 	import { onMount } from 'svelte';
-	import type { Delta, Editor } from 'typewriter-editor';
+	import type { Node } from 'prosemirror-model';
+	import { messageSchema } from '$lib/components/RichTextInput/schema';
 
 	let name: string = $state('');
-	let editor: Editor | undefined = $state();
-	let delta: Delta | undefined = $state();
-	let plainText: string = $state('');
+	let bioDoc: Node | null = $state(null);
 	let password: string = $state('');
 	let repeatPassword: string = $state('');
 	let identityServer: string = $state('other.blue');
 
 	let isBusy: boolean = $state(false);
 
-	let bioPlaceholder = $state('Introduce yourself.');
-
-	const bioPlaceholders = [
-		'a 23 yo. designer from Tokyo.',
-		'a 19 yo. student from New York.',
-		'a 30 yo. developer from Berlin.',
-		'a 25 yo. artist from Paris.',
-		'a 28 yo. writer from London.'
-	];
-
 	let passwordMatch = $derived(password === repeatPassword);
 	let canCreate = $derived(name.length > 0 && password.length > 0 && passwordMatch);
 	let customize = $derived(page.url.hash === '#customize');
-
-	onMount(() => {
-		const bioPlaceholderRotateRef = setInterval(() => {
-			bioPlaceholder = bioPlaceholders[Math.floor(Math.random() * bioPlaceholders.length)];
-		}, 5000);
-		return () => clearInterval(bioPlaceholderRotateRef);
-	});
 
 	async function createAccount() {
 		const profile: BlahProfile = {
 			typ: 'profile',
 			name,
-			bio: plainText,
+			bio: bioDoc?.textContent,
 			preferred_chat_server_urls: [],
 			id_urls: []
 		};
@@ -95,15 +77,12 @@
 	</GroupedListSection>
 
 	<GroupedListSection>
-		{#snippet header()}
-			<h4>Bio</h4>
-		{/snippet}
+		{#snippet header()}Bio{/snippet}
 		<RichTextInput
+			schema={messageSchema}
+			onDocChange={(newDoc) => (bioDoc = newDoc)}
 			class="p-4 shadow-none ring-0"
-			bind:editor
-			bind:delta
-			bind:plainText
-			placeholder={bioPlaceholder}
+			placeholder="a 25 yo. artist from Paris."
 		/>
 		{#snippet footer()}
 			<p>Introduce yourself. This will be public for everyone to see.</p>
@@ -111,9 +90,7 @@
 	</GroupedListSection>
 
 	<GroupedListSection>
-		{#snippet header()}
-			<h4>Security</h4>
-		{/snippet}
+		{#snippet header()}Security{/snippet}
 		<GroupedListInputItem>
 			Password
 			<input type="password" bind:value={password} placeholder="Password" disabled={isBusy} />
@@ -141,9 +118,7 @@
 	</GroupedListSection>
 	{#if customize}
 		<GroupedListSection>
-			{#snippet header()}
-				<h4>Identity Service</h4>
-			{/snippet}
+			{#snippet header()}Identity Service{/snippet}
 			<GroupedListInputItem>
 				Initial Service
 				<input type="text" bind:value={identityServer} />
