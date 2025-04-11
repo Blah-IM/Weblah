@@ -15,9 +15,9 @@
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import type { BlahProfile } from '@blah-im/core/identity';
-	import { onMount } from 'svelte';
 	import type { Node } from 'prosemirror-model';
 	import { messageSchema } from '$lib/components/RichTextInput/schema';
+	import GroupedListContent from '$lib/components/GroupedList/GroupedListContent.svelte';
 
 	let name: string = $state('');
 	let bioDoc: Node | null = $state(null);
@@ -64,7 +64,7 @@
 
 <GroupedListContainer>
 	<GroupedListSection>
-		<GroupedListItem>
+		<GroupedListContent class="flex items-center">
 			<ProfilePicture size={64} account={undefined} />
 			<input
 				type="text"
@@ -73,24 +73,22 @@
 				disabled={isBusy}
 				class="caret-accent-500 ms-3 flex-1 bg-transparent text-lg leading-loose outline-hidden placeholder:opacity-50"
 			/>
-		</GroupedListItem>
+		</GroupedListContent>
 	</GroupedListSection>
 
-	<GroupedListSection>
-		{#snippet header()}Bio{/snippet}
+	<GroupedListSection
+		header="Bio"
+		footer="Introduce yourself. This will be public for everyone to see."
+	>
 		<RichTextInput
 			schema={messageSchema}
 			onDocChange={(newDoc) => (bioDoc = newDoc)}
 			class="p-4 shadow-none ring-0"
 			placeholder="a 25 yo. artist from Paris."
 		/>
-		{#snippet footer()}
-			<p>Introduce yourself. This will be public for everyone to see.</p>
-		{/snippet}
 	</GroupedListSection>
 
-	<GroupedListSection>
-		{#snippet header()}Security{/snippet}
+	<GroupedListSection header="Security">
 		<GroupedListInputItem>
 			Password
 			<input type="password" bind:value={password} placeholder="Password" disabled={isBusy} />
@@ -117,8 +115,7 @@
 		{/snippet}
 	</GroupedListSection>
 	{#if customize}
-		<GroupedListSection>
-			{#snippet header()}Identity Service{/snippet}
+		<GroupedListSection header="Identity Service">
 			<GroupedListInputItem>
 				Initial Service
 				<input type="text" bind:value={identityServer} />
