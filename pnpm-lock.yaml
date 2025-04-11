@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@blah-im/core':
-        specifier: ^0.4.3
-        version: 0.4.3
+        specifier: ^0.5.0
+        version: 0.5.0
       '@melt-ui/svelte':
         specifier: ^0.86.6
         version: 0.86.6(svelte@5.25.12)
@@ -143,8 +143,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@blah-im/core@0.4.3':
-    resolution: {integrity: sha512-qrVybHBFctonxAo/TYmyQ6X+7JPzu8jDMCxcfQvlI+SnZBWcYjqEVb3+A9Oqws0nivNlRvue7D0QdXxaEO8AyA==}
+  '@blah-im/core@0.5.0':
+    resolution: {integrity: sha512-Joaj8K+yd4DVwQrSe8NRxwjMFtzibvj9z70fl/s3ulw+1+dZtsCaRoYnNHS0hE8CZ7g2QshLG6ymvWBQo4rXNQ==}
 
   '@esbuild/aix-ppc64@0.19.12':
     resolution: {integrity: sha512-bmoCYyWdEL3wDQIVbcyzRyeKLgk2WtWLTWz1ZIAZF/EGbNOwSA6ew3PftJ1PqMiOOGu0OyFMzG53L0zqIpPeNA==}
@@ -2091,7 +2091,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@blah-im/core@0.4.3':
+  '@blah-im/core@0.5.0':
     dependencies:
       zod: 3.24.2
 
