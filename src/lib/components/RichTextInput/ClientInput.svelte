@@ -27,11 +27,11 @@
 			{ mount: domEl },
 			{
 				state,
-				dispatchTransaction: (tr) => {
-					const newState = state.apply(tr);
+				dispatchTransaction(tr) {
+					const newState = editorView.state.apply(tr);
 					editorView.updateState(newState);
-					onDocChange?.(newState.doc);
 
+					onDocChange?.(newState.doc);
 					isEmpty = newState.doc.textContent.length === 0;
 				}
 			}
