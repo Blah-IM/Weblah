@@ -27,9 +27,11 @@
 	{#if icon}
 		<Icon
 			src={icon}
-			class={tw('text-sf-secondary size-5', selected && 'dark:text-sf-primary text-white')}
+			class={tw('text-sf-secondary size-5 shrink-0', selected && 'dark:text-sf-primary text-white')}
 			mini
 		/>
 	{/if}
-	{@render children?.()}
+	<div class="min-w-0 truncate text-start">
+		{@render children?.()}
+	</div>
 </svelte:element>
