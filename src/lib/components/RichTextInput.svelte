@@ -3,6 +3,9 @@
 	import InputFrame from '$lib/components/InputFrame.svelte';
 	import type { Props as ClientInputProps } from './RichTextInput/ClientInput.svelte';
 	import { tw } from '$lib/tw';
+	import type { EditorView } from 'prosemirror-view';
+	import type { Component } from 'svelte';
+	import ClientInput from './RichTextInput/ClientInput.svelte';
 
 	interface Props extends ClientInputProps {
 		class?: string;
@@ -15,6 +18,11 @@
 		const { default: ClientInput } = await import('./RichTextInput/ClientInput.svelte');
 		return ClientInput;
 	};
+
+	let clientInput: ReturnType<typeof ClientInput> | null = $state(null);
+	export function getEditorView(): EditorView | null {
+		return clientInput?.getEditorView() ?? null;
+	}
 </script>
 
 <InputFrame class={tw('overflow-y-auto', className)}>
@@ -27,7 +35,7 @@
 			{/if}
 		</div>
 	{:then ClientInput}
-		<ClientInput {placeholder} {...clientInputProps}>
+		<ClientInput {placeholder} {...clientInputProps} bind:this={clientInput}>
 			{@render children?.()}
 		</ClientInput>
 	{/await}

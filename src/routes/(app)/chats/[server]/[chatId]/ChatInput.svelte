@@ -2,8 +2,9 @@
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
 	import type { BlahRichText } from '@blah-im/core/richText';
-	import { deltaToBlahRichText } from '$lib/richText';
-	import type { Delta, Editor } from 'typewriter-editor';
+	import { proseMirrorDocToBlahRichText } from '$lib/richText';
+	import type { Node } from 'prosemirror-model';
+	import { messageSchema } from '$lib/components/RichTextInput/schema';
 
 	let {
 		onSendMessage
@@ -11,25 +12,30 @@
 		onSendMessage: (message: BlahRichText) => void;
 	} = $props();
 
-	let editor: Editor | undefined = $state();
-	let delta: Delta | undefined = $state();
-	let plainText: string = $state('');
 	let form: HTMLFormElement | null = $state(null);
 
-	function onKeyboardSubmit() {
-		editor?.select(null);
+	let doc: Node | null = $state(null);
+	let input: ReturnType<typeof RichTextInput>;
+
+	function onKeyboardSubmit(newDoc: Node) {
+		doc = newDoc;
 		form?.requestSubmit();
 	}
 
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
 
-		if (plainText.trim() === '' || !delta) return;
+		if (!doc || doc.textContent.trim() === '') return;
 
-		const brt = deltaToBlahRichText(delta);
+		const brt = proseMirrorDocToBlahRichText(doc);
 		onSendMessage(brt);
 
-		plainText = '';
+		const view = input.getEditorView();
+		if (view) {
+			const tr = view.state.tr;
+			tr.delete(0, view.state.doc.content.size);
+			view.dispatch(tr);
+		}
 	}
 </script>
 
@@ -56,13 +62,13 @@
 		<span class="sr-only">Attach</span>
 	</Button>
 	<RichTextInput
-		bind:editor
-		bind:delta
-		bind:plainText
+		bind:this={input}
+		schema={messageSchema}
 		placeholder="Message"
 		class="max-h-40 flex-1"
 		keyboardSubmitMethod="enter"
 		{onKeyboardSubmit}
+		onDocChange={(newDoc) => (doc = newDoc)}
 	/>
 	<Button class="p-1.5" variant="primary" type="submit">
 		<svg

@@ -13,6 +13,7 @@
 	const { onDocChange, placeholder = '', children, ...stateConfiguration }: Props = $props();
 
 	let domEl: HTMLDivElement;
+	let editorView: EditorView;
 
 	let isEmpty = $state(!children);
 
@@ -21,26 +22,29 @@
 		domEl.replaceChildren();
 		onDocChange?.(initialDoc);
 
-		let state = createProseMirrorEditorState({ initialDoc, ...stateConfiguration });
-		let view = new EditorView(
+		const state = createProseMirrorEditorState({ initialDoc, ...stateConfiguration });
+		editorView = new EditorView(
 			{ mount: domEl },
 			{
 				state,
 				dispatchTransaction: (tr) => {
-					state = state.apply(tr);
-					view.updateState(state);
-					onDocChange?.(state.doc);
+					const newState = state.apply(tr);
+					editorView.updateState(newState);
+					onDocChange?.(newState.doc);
 
-					const doc = state.doc;
-					isEmpty = doc.textContent.length === 0;
+					isEmpty = newState.doc.textContent.length === 0;
 				}
 			}
 		);
 
 		return () => {
-			view.destroy();
+			editorView.destroy();
 		};
 	});
+
+	export function getEditorView(): EditorView | null {
+		return editorView;
+	}
 </script>
 
 <div

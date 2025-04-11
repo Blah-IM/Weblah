@@ -1,78 +1,59 @@
 import type { BlahRichText, BlahRichTextSpanAttributes } from '@blah-im/core/richText';
-import canonicalize from 'canonicalize';
-import type { AttributeMap, Delta } from 'typewriter-editor';
+import type { Node } from 'prosemirror-model';
 
 function isObjectEmpty(obj: object) {
 	for (const _ in obj) return false;
 	return true;
 }
 
-function deltaAttributesToBlahRichTextSpanAttributes(
-	attributes?: AttributeMap
-): BlahRichTextSpanAttributes | null {
-	if (!attributes) return null;
-
-	const blahRichTextSpanAttributes: BlahRichTextSpanAttributes = {};
-
-	if (attributes.bold) blahRichTextSpanAttributes.b = true;
-	if (attributes.italic) blahRichTextSpanAttributes.i = true;
-	if (attributes.code) blahRichTextSpanAttributes.m = true;
-	if (attributes.link) blahRichTextSpanAttributes.link = attributes.link;
-
-	if (attributes.underline) blahRichTextSpanAttributes.u = true;
-	if (attributes.strikethrough) blahRichTextSpanAttributes.s = true;
-
-	return isObjectEmpty(blahRichTextSpanAttributes) ? null : blahRichTextSpanAttributes;
-}
-
-export function deltaToBlahRichText(delta: Delta, trim: boolean = true): BlahRichText {
+export function proseMirrorDocToBlahRichText(doc: Node): BlahRichText {
 	const spans: BlahRichText = [];
+	for (const paragraph of doc.content.content) {
+		if (!paragraph.type.isBlock) continue;
 
-	let lastText = '';
-	let lastAttributes: BlahRichTextSpanAttributes | null = null;
-	let canonicalizedLastAttributes: string = 'null';
+		for (const inline of paragraph.content.content) {
+			if (!inline.type.isText) continue;
 
-	function commitSpan(trim?: 'start' | 'end'): boolean {
-		const trimmedLastText =
-			trim === 'start' ? lastText.trimStart() : trim === 'end' ? lastText.trimEnd() : lastText;
-		if (trimmedLastText === '') return false;
-		spans.push(lastAttributes === null ? trimmedLastText : [trimmedLastText, lastAttributes]);
-		return true;
-	}
-
-	let isFirstSpan = true;
-	for (const op of delta.ops) {
-		// Not sure in what cases op.insert would not be a string, but let's be safe
-		if (typeof op.insert !== 'string') continue;
-
-		const attributes = deltaAttributesToBlahRichTextSpanAttributes(op.attributes);
-		const canonicalizedAttributes = canonicalize(attributes) ?? 'null';
-
-		if (canonicalizedAttributes === canonicalizedLastAttributes) {
-			lastText += op.insert;
-			continue;
+			const text = inline.text ?? '';
+			const attributes: BlahRichTextSpanAttributes = {};
+			const marks = inline.marks ?? [];
+			for (const mark of marks) {
+				switch (mark.type.name) {
+					case 'strong':
+						attributes.b = true;
+						break;
+					case 'em':
+						attributes.i = true;
+						break;
+					case 'code':
+						attributes.m = true;
+						break;
+					case 'link':
+						attributes.link = mark.attrs.href;
+						break;
+					case 'underline':
+						attributes.u = true;
+						break;
+					case 'strikethrough':
+						attributes.s = true;
+						break;
+					case 'tag':
+						attributes.tag = true;
+						break;
+					case 'spoiler':
+						attributes.spoiler = true;
+						break;
+				}
+			}
+			if (isObjectEmpty(attributes)) {
+				spans.push(text);
+			} else {
+				spans.push([text, attributes]);
+			}
 		}
 
-		const commited = commitSpan(trim && isFirstSpan ? 'start' : undefined);
-		if (commited) isFirstSpan = false;
-
-		lastText = op.insert;
-		lastAttributes = attributes;
-		canonicalizedLastAttributes = canonicalizedAttributes;
-	}
-	const lastCommited = commitSpan(trim ? 'end' : undefined);
-	if (trim && !lastCommited) {
-		// The last segment is empty, so we need to trim the one before it
-		let lastSpan = spans.pop();
-		if (!lastSpan) return spans;
-
-		if (typeof lastSpan === 'string') {
-			lastSpan = lastSpan.trimEnd();
-			if (lastSpan !== '') spans.push(lastSpan);
-		} else {
-			lastSpan[0] = lastSpan[0].trimEnd();
-			if (lastSpan[0] !== '') spans.push(lastSpan);
-		}
+		// TODO: Proper multi-paragraph support
+		spans.push('\n');
 	}
 
 	return spans;
