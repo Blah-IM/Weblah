@@ -45,11 +45,11 @@
 			const accountStore = await openAccountStore();
 			const idKeyId = await accountStore.createAccount(profile, password);
 			$currentAccountStore = idKeyId;
+			goto('/settings');
 		} catch (error) {
 			console.error(error);
 		}
 		isBusy = false;
-		goto('/settings');
 	}
 </script>
 
