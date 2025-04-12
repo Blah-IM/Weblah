@@ -21,6 +21,7 @@
 		const initialDoc = DOMParser.fromSchema(stateConfiguration.schema).parse(domEl);
 		domEl.replaceChildren();
 		onDocChange?.(initialDoc);
+		isEmpty = initialDoc.textContent.length === 0;
 
 		const state = createProseMirrorEditorState({ initialDoc, ...stateConfiguration });
 		editorView = new EditorView(

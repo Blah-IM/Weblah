@@ -6,7 +6,6 @@
 	import {
 		GroupedListContainer,
 		GroupedListSection,
-		GroupedListItem,
 		GroupedListInputItem
 	} from '$lib/components/GroupedList';
 	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte';
@@ -24,12 +23,18 @@
 	let password: string = $state('');
 	let repeatPassword: string = $state('');
 	let identityServer: string = $state('other.blue');
+	let selfhostDomain: string = $state('');
 
 	let isBusy: boolean = $state(false);
 
-	let passwordMatch = $derived(password === repeatPassword);
-	let canCreate = $derived(name.length > 0 && password.length > 0 && passwordMatch);
-	let customize = $derived(page.url.hash === '#customize');
+	const passwordMatch = $derived(password === repeatPassword);
+	const selfhostIdentity = $derived(page.url.hash === '#identity-selfhost');
+	const canCreate = $derived(
+		name.length > 0 &&
+			password.length > 0 &&
+			passwordMatch &&
+			(selfhostIdentity ? selfhostDomain.length > 0 : false)
+	);
 
 	async function createAccount() {
 		const profile: BlahProfile = {
@@ -37,7 +42,7 @@
 			name,
 			bio: bioDoc?.textContent,
 			preferred_chat_server_urls: [],
-			id_urls: []
+			id_urls: selfhostIdentity ? ['https://' + selfhostDomain] : []
 		};
 		isBusy = true;
 
@@ -114,7 +119,27 @@
 			</div>
 		{/snippet}
 	</GroupedListSection>
-	{#if customize}
+	{#if selfhostIdentity}
+		<GroupedListSection header="Profile Hosting">
+			<GroupedListInputItem>
+				Domain Name
+				<input type="text" bind:value={selfhostDomain} placeholder="example.com" />
+			</GroupedListInputItem>
+			{#snippet footer()}
+				<div class="space-y-1">
+					<p>
+						After creating account, you need to serve your profile file to a specific location under
+						this domain.
+						<Link href="/" variant="secondary">Learn more about hosting your own profile...</Link>
+					</p>
+					<p>
+						<Link href="#" variant="secondary">Use identity service</Link> if you you want a simple way
+						to start. You can always switch to self-hosting later.
+					</p>
+				</div>
+			{/snippet}
+		</GroupedListSection>
+	{:else}
 		<GroupedListSection header="Identity Service">
 			<GroupedListInputItem>
 				Initial Service
@@ -123,23 +148,19 @@
 			{#snippet footer()}
 				<div class="space-y-1">
 					<p>
-						Your profile is stored and served to other users on the identity service.
+						By creating an account on <em>{identityServer}</em>, which stores and serve this public
+						profile to other users, you agree to Terms of Service and Privacy Policy of
+						<em>{identityServer}</em>.
 						<Link href="/" variant="secondary">Learn more about identity services...</Link>
 					</p>
 					<p>You can add, replace or remove identity services later in account settings.</p>
+					<p>
+						If you own or can afford a domain name, you can
+						<Link href="#identity-selfhost" variant="secondary">host your own profile</Link>
+						instead of using a service.
+					</p>
 				</div>
 			{/snippet}
 		</GroupedListSection>
 	{/if}
-	<div class="text-sf-tertiary px-8 text-sm">
-		<p>
-			By creating an account, you agree to Terms of Service and Privacy Policy of
-			<em>{identityServer}</em>, which stores and serve your public profile to other users.
-			{#if customize}
-				<Link href="#">Use default</Link>
-			{:else}
-				<Link href="#customize">Customize...</Link>
-			{/if}
-		</p>
-	</div>
 </GroupedListContainer>

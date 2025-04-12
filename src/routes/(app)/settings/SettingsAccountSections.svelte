@@ -44,9 +44,7 @@
 				</p>
 				<p>
 					<code class="text-sf-secondary text-sm">
-						{currentAccount.profile.signee.id_key.slice(0, 6) +
-							'...' +
-							currentAccount.profile.signee.id_key.slice(-6)}
+						{currentAccount.id_key.slice(0, 4) + '..' + currentAccount.id_key.slice(-4)}
 					</code>
 				</p>
 			</div>
