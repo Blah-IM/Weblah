@@ -4,11 +4,11 @@
 	import { tw } from '$lib/tw';
 	import {
 		Bell,
-		Cog,
 		DevicePhoneMobile,
 		InformationCircle,
 		LockClosed,
-		QuestionMarkCircle
+		QuestionMarkCircle,
+		User
 	} from 'svelte-hero-icons';
 	import { scale } from 'svelte/transition';
 	import SettingsListItem from './SettingsListItem.svelte';
@@ -20,11 +20,10 @@
 	}
 
 	let { class: className = '' }: Props = $props();
-	
 </script>
 
 <div
-	class={tw('flex flex-col bg-sb-secondary shadow-md', className)}
+	class={tw('bg-sb-secondary flex flex-col shadow-md', className)}
 	transition:scale={{ duration: 250, start: 0.95 }}
 >
 	<PageHeader>
@@ -36,10 +35,13 @@
 		<SettingsAccountSections />
 
 		<GroupedListSection>
-			<SettingsListItem icon={Cog} route="">General</SettingsListItem>
+			<SettingsListItem icon={User} route="">My Profile</SettingsListItem>
+			<GroupedListItem icon={DevicePhoneMobile}>Devices</GroupedListItem>
+		</GroupedListSection>
+
+		<GroupedListSection>
 			<GroupedListItem icon={Bell}>Notifications</GroupedListItem>
 			<GroupedListItem icon={LockClosed}>Privacy and Security</GroupedListItem>
-			<GroupedListItem icon={DevicePhoneMobile}>Devices</GroupedListItem>
 		</GroupedListSection>
 
 		<GroupedListSection>

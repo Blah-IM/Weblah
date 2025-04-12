@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { GroupedListItem, GroupedListSection } from '$lib/components/GroupedList';
-	import { ArrowRightEndOnRectangle, UserPlus } from 'svelte-hero-icons';
+	import { ArrowRightEndOnRectangle, Plus, UserPlus } from 'svelte-hero-icons';
 	import SettingsListItem from './SettingsListItem.svelte';
 	import {
 		openAccountStore,
@@ -66,6 +66,12 @@
 {/if}
 
 <GroupedListSection>
-	<SettingsListItem icon={ArrowRightEndOnRectangle} route="/account/add">Sign in</SettingsListItem>
-	<SettingsListItem icon={UserPlus} route="/account/new">Create Account</SettingsListItem>
+	{#if ($accountStore?.length ?? 0) > 0}
+		<SettingsListItem icon={Plus} route="/account/add">Add Account</SettingsListItem>
+	{:else}
+		<SettingsListItem icon={ArrowRightEndOnRectangle} route="/account/add">
+			Sign in
+		</SettingsListItem>
+		<SettingsListItem icon={UserPlus} route="/account/new">Create Account</SettingsListItem>
+	{/if}
 </GroupedListSection>
