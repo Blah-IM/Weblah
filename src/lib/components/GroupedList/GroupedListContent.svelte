@@ -10,6 +10,6 @@
 	let { children, class: classNames, ...rest }: Props = $props();
 </script>
 
-<div class={tw('px-4 py-3', classNames)} {...rest}>
+<div class={tw('px-4 py-3 font-medium', classNames)} {...rest}>
 	{@render children?.()}
 </div>
