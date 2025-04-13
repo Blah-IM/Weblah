@@ -22,9 +22,9 @@
 	});
 
 	let isSettings = $derived($page.route.id?.startsWith('/(app)/settings') ?? true);
-	let mainVisible =
-		$derived(!!$page.params.chatId ||
-		(isSettings && !$page.route.id?.startsWith('/(app)/settings/_mobile_empty')));
+	let mainVisible = $derived(
+		!!$page.params.chatId || (isSettings && $page.route.id !== '/(app)/settings')
+	);
 </script>
 
 <div
@@ -32,7 +32,7 @@
 	data-weblah-main-visible={mainVisible ? 'true' : undefined}
 >
 	<aside
-		class="relative h-[100dvh] min-h-0 overflow-hidden border-ss-primary bg-sb-primary shadow-lg [view-transition-name:chat-list] after:pointer-events-none after:absolute after:inset-0 after:size-full after:bg-transparent group-data-weblah-main-visible:after:bg-black/30 sm:w-1/3 sm:border-e sm:after:hidden lg:w-1/4"
+		class="border-ss-primary bg-sb-primary relative h-[100dvh] min-h-0 overflow-hidden shadow-lg [view-transition-name:chat-list] after:pointer-events-none after:absolute after:inset-0 after:size-full after:bg-transparent group-data-weblah-main-visible:after:bg-black/30 sm:w-1/3 sm:border-e sm:after:hidden lg:w-1/4"
 	>
 		<ChatList />
 		{#if isSettings}
@@ -41,7 +41,7 @@
 	</aside>
 	{#if mainVisible}
 		<main
-			class="absolute inset-0 w-full bg-sb-secondary shadow-lg [view-transition-name:main] sm:relative sm:flex-1 sm:shadow-none"
+			class="bg-sb-secondary absolute inset-0 w-full shadow-lg [view-transition-name:main] sm:relative sm:flex-1 sm:shadow-none"
 		>
 			{@render children?.()}
 		</main>

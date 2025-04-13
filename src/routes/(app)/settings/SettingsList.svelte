@@ -35,7 +35,7 @@
 		<SettingsAccountSections />
 
 		<GroupedListSection>
-			<SettingsListItem icon={User} route="">My Profile</SettingsListItem>
+			<SettingsListItem icon={User} route="/account/profile">My Profile</SettingsListItem>
 			<GroupedListItem icon={DevicePhoneMobile}>Devices</GroupedListItem>
 		</GroupedListSection>
 

@@ -3,7 +3,7 @@
 	import InputFrame from '$lib/components/InputFrame.svelte';
 	import { Icon, MagnifyingGlass, PencilSquare, XCircle } from 'svelte-hero-icons';
 	import { tw } from '$lib/tw';
-	import CurrentAccountPicture from './CurrentAccountPicture.svelte';
+	import CurrentAccountIndicator from './CurrentAccountIndicator.svelte';
 
 	interface Props {
 		searchQuery?: string;
@@ -20,15 +20,12 @@
 </script>
 
 <header class="border-ss-secondary flex items-center justify-stretch gap-2 border-b p-2 shadow-xs">
-	<a
+	<CurrentAccountIndicator
 		class={tw(
 			'transition-[opacity,transform] duration-200',
 			isSearchFocused && '-translate-x-full opacity-0'
 		)}
-		href="/settings"
-	>
-		<CurrentAccountPicture />
-	</a>
+	/>
 	<InputFrame
 		class={tw('z-10 h-8 flex-1 transition-all duration-200', isSearchFocused && '-mx-10')}
 	>

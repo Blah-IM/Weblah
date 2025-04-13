@@ -3,7 +3,7 @@
 	import { AvatarBeam } from 'svelte-boring-avatars';
 
 	interface Props {
-		identity: BlahIdentityDescription | undefined;
+		identity: BlahIdentityDescription | null;
 		size?: number;
 	}
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import accountsManager from '$lib/accounts/manager.svelte';
+	import manager from '$lib/accounts/manager.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import {
 		GroupedListContainer,
@@ -47,8 +47,8 @@
 		isBusy = true;
 
 		try {
-			const idKeyId = await accountsManager.createAccount(profile, password);
-			accountsManager.currentAccountId = idKeyId;
+			const idKeyId = await manager.createAccount(profile, password);
+			manager.currentAccountId = idKeyId;
 			goto('/settings');
 		} catch (error) {
 			console.error(error);
@@ -69,7 +69,7 @@
 <GroupedListContainer>
 	<GroupedListSection>
 		<GroupedListContent class="flex items-center">
-			<ProfilePicture size={64} identity={undefined} />
+			<ProfilePicture size={64} identity={null} />
 			<input
 				type="text"
 				bind:value={name}
