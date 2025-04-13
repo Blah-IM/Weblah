@@ -4,7 +4,6 @@
 	import type { Props as ClientInputProps } from './RichTextInput/ClientInput.svelte';
 	import { tw } from '$lib/tw';
 	import type { EditorView } from 'prosemirror-view';
-	import type { Component } from 'svelte';
 	import ClientInput from './RichTextInput/ClientInput.svelte';
 
 	interface Props extends ClientInputProps {
