@@ -1,25 +1,25 @@
 <script lang="ts">
-	import type { Account } from '$lib/accounts/accountStore';
+	import type { BlahIdentityDescription } from '@blah-im/core/identity';
 	import { AvatarBeam } from 'svelte-boring-avatars';
 
 	interface Props {
-		account: Account | undefined;
+		identity: BlahIdentityDescription | undefined;
 		size?: number;
 	}
 
-	let { account, size = 32 }: Props = $props();
+	let { identity, size = 32 }: Props = $props();
 </script>
 
-{#if account}
-	{#key account.id_key}
-		<AvatarBeam {size} name={account.id_key} />
+{#if identity}
+	{#key identity.id_key}
+		<AvatarBeam {size} name={identity.id_key} />
 	{/key}
-	<span class="sr-only">{account.profile.signee.payload.name}</span>
+	<span class="sr-only">{identity.profile.signee.payload.name}</span>
 {:else}
 	<div
 		class="border-ss-primary box-border size-(--weblah-profile-pic-size) rounded-full border-2 border-dashed"
 		style:--weblah-profile-pic-size={`${size}px`}
 		aria-hidden="true"
 	></div>
-	<span class="sr-only">Account Unavailable</span>
+	<span class="sr-only">Identity Unavailable</span>
 {/if}
