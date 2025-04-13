@@ -4,7 +4,7 @@ import {
 	type BlahIdentityDescription,
 	type BlahProfile
 } from '@blah-im/core/identity';
-import { type IdentityDB, openIdentityDB } from './identityFileDB';
+import { type IdentityDB, openIdentityDB } from './identityDB';
 import { BlahKeyPair } from '@blah-im/core/crypto';
 import { browser } from '$app/environment';
 
@@ -89,15 +89,16 @@ class AccountManager {
 
 		const accountCreds = await this.keyDB.fetchAccount(idKeyId);
 		const encodedIdKeyPair = accountCreds?.encodedIdKeyPair;
-		const idKeyPair = encodedIdKeyPair
-			? await BlahKeyPair.fromEncoded(encodedIdKeyPair, password)
-			: undefined;
+		const idKeyPair =
+			encodedIdKeyPair && password
+				? await BlahKeyPair.fromEncoded(encodedIdKeyPair, password)
+				: undefined;
 		const actKeyPair = accountCreds?.actKeyPair;
 
 		return await BlahIdentity.fromIdentityDescription(identityFile, idKeyPair, actKeyPair);
 	}
 
-	async saveIdentityDescription(identity: BlahIdentity) {
+	async saveIdentity(identity: BlahIdentity) {
 		if (!this.identityDB) throw new Error('Account manager not initialized');
 
 		const identityDesc = identity.generateIdentityDescription();
@@ -113,7 +114,7 @@ class AccountManager {
 		const identity = await BlahIdentity.create(idKeyPair, actKeyPair, profile);
 		const encodedIdKeyPair = await idKeyPair.encode(password);
 		await this.keyDB.addAccount(idKeyPair.id, actKeyPair, encodedIdKeyPair);
-		await this.saveIdentityDescription(identity);
+		await this.saveIdentity(identity);
 		return idKeyPair.id;
 	}
 }
