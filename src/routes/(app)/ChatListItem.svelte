@@ -3,7 +3,7 @@
 
 	import { formatMessageDate, formatFullMessageDate, formatUnreadCount } from '$lib/formatters';
 	import type { Chat } from '$lib/types';
-	import { currentKeyPair } from '$lib/keystore';
+	import accountManager from '$lib/accounts/manager.svelte';
 	import { toPlainText } from '@blah-im/core/richText';
 	import { page } from '$app/state';
 	import { tw } from '$lib/tw';
@@ -56,7 +56,7 @@
 					{#if chat.lastMessage}
 						{#if chat.id !== chat.lastMessage.sender.id}
 							<span class="text-sf-primary">
-								{chat.lastMessage.sender.id === $currentKeyPair.id
+								{chat.lastMessage.sender.id === accountManager.currentAccountId
 									? 'You'
 									: chat.lastMessage.sender.name}:
 							</span>

@@ -2,76 +2,66 @@
 	import { GroupedListItem, GroupedListSection } from '$lib/components/GroupedList';
 	import { ArrowRightEndOnRectangle, Plus, UserPlus } from 'svelte-hero-icons';
 	import SettingsListItem from './SettingsListItem.svelte';
-	import {
-		openAccountStore,
-		currentAccountStore,
-		type AccountStore,
-		type Account
-	} from '$lib/accounts/accountStore';
-	import { onMount } from 'svelte';
+	import manager, { type Account } from '$lib/accounts/manager.svelte';
 	import ProfilePicture from '$lib/components/ProfilePicture.svelte';
 	import { flip } from 'svelte/animate';
 	import { blur } from 'svelte/transition';
+	import GroupedListContent from '$lib/components/GroupedList/GroupedListContent.svelte';
 
-	let accountStore: AccountStore | undefined = $state();
-
-	onMount(() => {
-		openAccountStore().then((store) => {
-			accountStore = store;
-		});
-	});
+	const currentAccount = $derived(manager.currentAccount);
+	const remainingAccounts = $derived(
+		manager.accounts
+			.filter((acc) => acc.id_key !== manager.currentAccountId)
+			.toSorted((a, b) =>
+				a.profile.signee.payload.name.localeCompare(b.profile.signee.payload.name)
+			)
+	);
 
 	function switchToAccount(account: Account) {
-		$currentAccountStore = account.id_key;
+		manager.currentAccountId = account.id_key;
 	}
 </script>
 
-{#if accountStore && $accountStore}
-	{@const currentAccount = $accountStore.find((acc) => acc.id_key === $currentAccountStore)}
-	{@const remainingAccounts = $accountStore
-		.filter((acc) => acc.id_key !== $currentAccountStore)
-		.toSorted((a, b) => a.profile.signee.payload.name.localeCompare(b.profile.signee.payload.name))}
-	{#if currentAccount}
-		{#key currentAccount.id_key}
-			<div class="mt-6 p-4 text-center" in:blur>
-				<div class="inline-block">
-					<ProfilePicture account={currentAccount} size={68} />
-				</div>
-				<p>
-					<span class="text-sf-primary text-xl font-semibold">
-						{currentAccount.profile.signee.payload.name}
-					</span>
-				</p>
-				<p>
-					<code class="text-sf-secondary text-sm">
-						{currentAccount.id_key.slice(0, 4) + '..' + currentAccount.id_key.slice(-4)}
-					</code>
-				</p>
+{#if currentAccount}
+	{#key currentAccount.id_key}
+		<div class="mt-6 p-4 text-center" in:blur>
+			<div class="inline-block">
+				<ProfilePicture identity={currentAccount} size={68} />
 			</div>
-		{/key}
-	{/if}
-
-	{#if remainingAccounts.length > 0}
-		<GroupedListSection>
-			{#each remainingAccounts as account (account.id_key)}
-				<div animate:flip={{ duration: 250 }} transition:blur>
-					<GroupedListItem onclick={() => switchToAccount(account)}>
-						<div class="-mx-0.5"><ProfilePicture {account} size={24} /></div>
-						{account.profile.signee.payload.name}
-					</GroupedListItem>
-				</div>
-			{/each}
-		</GroupedListSection>
-	{/if}
+			<p>
+				<span class="text-sf-primary text-xl font-semibold">
+					{currentAccount.profile.signee.payload.name}
+				</span>
+			</p>
+			<p>
+				<code class="text-sf-secondary text-sm">
+					{currentAccount.id_key.slice(0, 4) + '..' + currentAccount.id_key.slice(-4)}
+				</code>
+			</p>
+		</div>
+	{/key}
 {/if}
 
-<GroupedListSection>
-	{#if ($accountStore?.length ?? 0) > 0}
+{#if remainingAccounts.length > 0}
+	<GroupedListSection>
+		{#each remainingAccounts as account (account.id_key)}
+			<GroupedListContent
+				class="flex gap-2"
+				role="button"
+				tabindex={0}
+				onclick={() => switchToAccount(account)}
+			>
+				<div class="-mx-0.5"><ProfilePicture identity={account} size={24} /></div>
+				{account.profile.signee.payload.name}
+			</GroupedListContent>
+		{/each}
 		<SettingsListItem icon={Plus} route="/account/add">Add Account</SettingsListItem>
-	{:else}
+	</GroupedListSection>
+{:else}
+	<GroupedListSection>
 		<SettingsListItem icon={ArrowRightEndOnRectangle} route="/account/add">
 			Sign in
 		</SettingsListItem>
 		<SettingsListItem icon={UserPlus} route="/account/new">Create Account</SettingsListItem>
-	{/if}
-</GroupedListSection>
+	</GroupedListSection>
+{/if}

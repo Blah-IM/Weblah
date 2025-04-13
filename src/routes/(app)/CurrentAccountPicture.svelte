@@ -24,7 +24,7 @@
 
 {#if accountStore && $accountStore}
 	{@const currentAccount = $accountStore.find((account) => account.id_key === $currentAccountStore)}
-	<ProfilePicture account={currentAccount} {size} />
+	<ProfilePicture identity={currentAccount} {size} />
 {:else}
-	<ProfilePicture account={undefined} {size} />
+	<ProfilePicture identity={undefined} {size} />
 {/if}

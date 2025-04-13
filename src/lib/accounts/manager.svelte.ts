@@ -6,7 +6,6 @@ import {
 } from '@blah-im/core/identity';
 import { type IdentityDB, openIdentityDB } from './identityFileDB';
 import { BlahKeyPair } from '@blah-im/core/crypto';
-import { persisted } from 'svelte-persisted-store';
 import { browser } from '$app/environment';
 
 export type Account = BlahIdentityDescription & {
@@ -30,24 +29,25 @@ class AccountManager {
 	constructor() {
 		if (browser) {
 			this.currentAccountId = localStorage.getItem(localStorageCurrentAccountIdKey);
+			console.log('currentAccountId', this.currentAccountId);
+
+			$effect.root(() => {
+				$effect(() =>
+					this.currentAccountId
+						? localStorage.setItem(localStorageCurrentAccountIdKey, this.currentAccountId)
+						: localStorage.removeItem(localStorageCurrentAccountIdKey)
+				);
+			});
+
+			(async () => {
+				this.inProgress = true;
+				const [keyDB, identityDB] = await Promise.all([openAccountKeyDB(), openIdentityDB()]);
+				this.keyDB = keyDB;
+				this.identityDB = identityDB;
+				await this.loadAccounts();
+				this.inProgress = false;
+			})();
 		}
-
-		$effect.root(() => {
-			$effect(() =>
-				this.currentAccountId
-					? localStorage.setItem(localStorageCurrentAccountIdKey, this.currentAccountId)
-					: localStorage.removeItem(localStorageCurrentAccountIdKey)
-			);
-		});
-
-		(async () => {
-			this.inProgress = true;
-			const [keyDB, identityDB] = await Promise.all([openAccountKeyDB(), openIdentityDB()]);
-			this.keyDB = keyDB;
-			this.identityDB = identityDB;
-			await this.loadAccounts();
-			this.inProgress = false;
-		})();
 	}
 
 	async loadAccounts() {

@@ -2,7 +2,6 @@ import { persisted } from 'svelte-persisted-store';
 import { get } from 'svelte/store';
 import { BlahChatServerConnection } from './blah/connection/chatServer';
 import { BlahKeyPair, type EncodedBlahKeyPair } from '@blah-im/core/crypto';
-import { currentKeyPair } from './keystore';
 import { ChatListManager } from './chatList';
 import { browser } from '$app/environment';
 import { GlobalSearchManager } from './globalSearch';
@@ -18,7 +17,7 @@ class ChatServerConnectionPool {
 	constructor() {
 		if (browser) {
 			chatServers.subscribe(this.onChatServersChange.bind(this));
-			currentKeyPair.subscribe(this.onKeyPairChange.bind(this));
+			// currentKeyPair.subscribe(this.onKeyPairChange.bind(this));
 		}
 	}
 
