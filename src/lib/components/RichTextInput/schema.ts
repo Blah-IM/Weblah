@@ -4,7 +4,7 @@ import { nodes as basicNodes, marks as basicMarks } from 'prosemirror-schema-bas
 export const messageSchema = new Schema({
 	nodes: {
 		doc: { content: 'block+' },
-		paragragh: {
+		paragraph: {
 			content: 'inline*',
 			...basicNodes.paragraph
 		},

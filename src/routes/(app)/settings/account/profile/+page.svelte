@@ -13,9 +13,12 @@
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
 	import { messageSchema } from '$lib/components/RichTextInput/schema';
+	import { blahRichTextToProseMirrorDoc } from '$lib/richText';
+	import type { Node } from 'prosemirror-model';
 
 	const currentAccount = $derived(accountsManager.currentAccount);
 	let profile: BlahProfile | null = $state(null);
+	let initialBio: Node | null = $state(null);
 
 	let isBusy: boolean = $state(false);
 
@@ -23,21 +26,17 @@
 		if (currentAccount) {
 			const snapshot = $state.snapshot(currentAccount.profile.signee.payload);
 			profile = snapshot;
-			console.log('Reloaded');
+			initialBio = blahRichTextToProseMirrorDoc([snapshot.bio ?? ''], messageSchema);
 		}
 	});
-
-	$inspect(profile);
 
 	async function saveProfile() {
 		if (!currentAccount || !profile) return;
 
-		console.log('Saving profile', $state.snapshot(profile));
 		isBusy = true;
 		const identity = await accountsManager.identityForAccount(currentAccount);
 		await identity.updateProfile(profile);
 		await accountsManager.saveIdentity(identity);
-		console.log('Profile saved', identity.generateIdentityDescription());
 		isBusy = false;
 	}
 </script>
@@ -67,9 +66,8 @@
 				schema={messageSchema}
 				onDocChange={(doc) => profile && (profile.bio = doc.textContent)}
 				placeholder="a 25 yo. artist from Paris."
-			>
-				{profile.bio ?? ''}
-			</RichTextInput>
+				initialDoc={initialBio}
+			/>
 		</GroupedListSection>
 	</GroupedListContainer>
 {/if}

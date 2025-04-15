@@ -7,10 +7,22 @@
 	export interface Props extends Omit<EditorStateConfiguration, 'initialDoc'> {
 		onDocChange?: (doc: Node) => void;
 		placeholder?: string;
+		/**
+		 * The initial content in editor.
+		 *
+		 * This is higher priority than `children`.
+		 */
+		initialDoc?: Node | null;
 		children?: import('svelte').Snippet;
 	}
 
-	const { onDocChange, placeholder = '', children, ...stateConfiguration }: Props = $props();
+	const {
+		onDocChange,
+		placeholder = '',
+		children,
+		initialDoc: initialDocProp,
+		...stateConfiguration
+	}: Props = $props();
 
 	let domEl: HTMLDivElement;
 	let editorView: EditorView;
@@ -18,7 +30,8 @@
 	let isEmpty = $state(!children);
 
 	$effect(() => {
-		const initialDoc = DOMParser.fromSchema(stateConfiguration.schema).parse(domEl);
+		const initialDoc =
+			initialDocProp ?? DOMParser.fromSchema(stateConfiguration.schema).parse(domEl);
 		domEl.replaceChildren();
 		onDocChange?.(initialDoc);
 		isEmpty = initialDoc.textContent.length === 0;
