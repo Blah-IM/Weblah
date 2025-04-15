@@ -8,15 +8,17 @@
 		GroupedListContent,
 		GroupedListItem
 	} from '$lib/components/GroupedList';
-	import type { BlahProfile } from '@blah-im/core/identity';
+	import type { BlahIdentity, BlahProfile } from '@blah-im/core/identity';
 	import ProfilePicture from '$lib/components/ProfilePicture.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import RichTextInput from '$lib/components/RichTextInput.svelte';
 	import { messageSchema } from '$lib/components/RichTextInput/schema';
 	import { blahRichTextToProseMirrorDoc } from '$lib/richText';
 	import type { Node } from 'prosemirror-model';
+	import UsernameItem from './UsernameItem.svelte';
 
 	const currentAccount = $derived(accountsManager.currentAccount);
+	let identity: BlahIdentity | null = $state(null);
 	let profile: BlahProfile | null = $state(null);
 	let initialBio: Node | null = $state(null);
 
@@ -27,6 +29,9 @@
 			const snapshot = $state.snapshot(currentAccount.profile.signee.payload);
 			profile = snapshot;
 			initialBio = blahRichTextToProseMirrorDoc([snapshot.bio ?? ''], messageSchema);
+			accountsManager.identityForAccount(currentAccount).then((x) => {
+				identity = x;
+			});
 		}
 	});
 
@@ -68,6 +73,12 @@
 				placeholder="a 25 yo. artist from Paris."
 				initialDoc={initialBio}
 			/>
+		</GroupedListSection>
+
+		<GroupedListSection header="Usernames">
+			{#each profile.id_urls as url (url)}
+				<UsernameItem {url} {identity} />
+			{/each}
 		</GroupedListSection>
 	</GroupedListContainer>
 {/if}
