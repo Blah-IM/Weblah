@@ -6,6 +6,7 @@
 	type Props = {
 		icon?: IconSource | undefined;
 		selected?: boolean;
+		badge?: import('svelte').Snippet;
 		children?: import('svelte').Snippet;
 		class?: string;
 	} & (
@@ -17,6 +18,7 @@
 	let {
 		icon = undefined,
 		selected = false,
+		badge,
 		children,
 		class: externalClass,
 		...rest
@@ -39,9 +41,12 @@
 			mini
 		/>
 	{/if}
-	<div class="min-w-0 truncate text-start">
+	<div class="min-w-0 grow truncate text-start">
 		{@render children?.()}
 	</div>
+	{#if badge}
+		<div class="flex shrink-0 items-center gap-2">{@render badge()}</div>
+	{/if}
 {/snippet}
 
 {#if 'href' in rest}
