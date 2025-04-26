@@ -11,7 +11,10 @@
 		class?: string;
 	} & (
 		| ({ href: string } & Omit<HTMLAnchorAttributes, 'class' | 'href'>)
-		| ({ onclick: Required<HTMLButtonAttributes['onclick']> } & Omit<HTMLButtonAttributes, 'class'>)
+		| ({ onclick: Exclude<HTMLButtonAttributes['onclick'], null | undefined> } & Omit<
+				HTMLButtonAttributes,
+				'class' | 'onclick'
+		  >)
 		| Omit<HTMLAttributes<HTMLDivElement>, 'onclick'>
 	);
 

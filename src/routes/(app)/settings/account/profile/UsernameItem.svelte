@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
+	import Dialog from '$lib/components/Dialog.svelte';
 	import { GroupedListItem } from '$lib/components/GroupedList';
-	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte';
-	import { idURLToUsername, validateIDURL } from '$lib/idURL';
+	import { idURLToUsername, validateIDURL, type IDURLValidity } from '$lib/idURL';
 	import type { BlahIdentity } from '@blah-im/core/identity';
-	import { AtSymbol, ExclamationCircle, ExclamationTriangle, Icon } from 'svelte-hero-icons';
+	import { AtSymbol, ExclamationCircle, Icon } from 'svelte-hero-icons';
+	import UsernameSetupSelfhostDialog from './UsernameSetupSelfhostDialog.svelte';
 
 	interface Props {
 		url: string;
@@ -12,27 +12,36 @@
 	}
 	let { url, identity }: Props = $props();
 
+	let validationResult = $state<IDURLValidity | null>(null);
+	let showFixDialog = $state(false);
+
 	async function validate() {
 		if (!identity) return null;
 
-		return await validateIDURL(url, identity);
+		validationResult = await validateIDURL(url, identity);
 	}
+
+	$effect.pre(() => {
+		if (identity && !showFixDialog) {
+			validate();
+		}
+	});
+
+	const isInvalid = $derived(validationResult && !validationResult.valid);
 </script>
 
-<GroupedListItem>
+<GroupedListItem onclick={isInvalid ? () => (showFixDialog = true) : undefined}>
 	<div class="flex items-center gap-0.5">
 		<Icon micro src={AtSymbol} class="size-3.5 opacity-90" />
 		<span>{idURLToUsername(url)}</span>
 	</div>
 
 	{#snippet badge()}
-		{#await validate()}
-			<LoadingIndicator />
-		{:then result}
-			{#if result && !result.valid}
-				<Icon mini src={ExclamationCircle} class="size-5 fill-red-500 dark:fill-red-400" />
-				<Button>Fix</Button>
+		{#if isInvalid}
+			<Icon mini src={ExclamationCircle} class="size-5 fill-red-500 dark:fill-red-400" />
+			{#if url && identity}
+				<UsernameSetupSelfhostDialog bind:open={showFixDialog} {url} {identity} />
 			{/if}
-		{/await}
+		{/if}
 	{/snippet}
 </GroupedListItem>

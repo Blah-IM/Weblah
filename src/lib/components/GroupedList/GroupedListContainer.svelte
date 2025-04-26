@@ -1,9 +1,15 @@
 <script lang="ts">
-	interface Props {
-		children?: import('svelte').Snippet;
-	}
+	import { tw } from '$lib/tw';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	let { children }: Props = $props();
+	type Props = {
+		children?: import('svelte').Snippet;
+		class?: string;
+	} & Omit<HTMLAttributes<HTMLDivElement>, 'class'>;
+
+	let { children, class: className, ...rest }: Props = $props();
 </script>
 
-<div class="mx-auto max-w-3xl">{@render children?.()}</div>
+<div class={tw('mx-auto max-w-3xl', className)} {...rest}>
+	{@render children?.()}
+</div>
