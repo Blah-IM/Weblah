@@ -49,7 +49,7 @@
 		try {
 			const idKeyId = await manager.createAccount(profile, password);
 			manager.currentAccountId = idKeyId;
-			goto('/settings');
+			goto('/settings/profile');
 		} catch (error) {
 			console.error(error);
 		}
