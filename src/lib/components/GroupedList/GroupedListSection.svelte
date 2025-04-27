@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Card from '../Card.svelte';
+
 	interface Props {
 		header?: import('svelte').Snippet | string;
 		children?: import('svelte').Snippet;
@@ -18,11 +20,9 @@
 			{/if}
 		</h3>
 	{/if}
-	<div
-		class="divide-ss-secondary border-ss-secondary bg-sb-primary divide-y-[0.5px] overflow-hidden rounded-lg border-[0.5px] shadow-xs"
-	>
+	<Card class="divide-ss-secondary divide-y-[0.5px]">
 		{@render children?.()}
-	</div>
+	</Card>
 	{#if footer}
 		<div class="text-sf-tertiary mt-1 px-4 text-sm">
 			{#if typeof footer === 'string'}

@@ -9,6 +9,8 @@ export function idURLToUsername(idURL: string): string {
 	return url.host;
 }
 
+export const identityDescriptionFilePath = '/.well-known/blah/identity.json';
+
 export type IDURLValidity =
 	| { valid: true }
 	| ({ valid: false } & (
@@ -39,7 +41,7 @@ export async function validateIDURL(url: string, identity: BlahIdentity): Promis
 
 	const profileFileURL = (() => {
 		let url = idURL;
-		url.pathname = '/.well-known/blah/identity.json';
+		url.pathname = identityDescriptionFilePath;
 		return url.toString();
 	})();
 

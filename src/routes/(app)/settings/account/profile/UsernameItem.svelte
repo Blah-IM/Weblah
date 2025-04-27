@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Dialog from '$lib/components/Dialog.svelte';
 	import { GroupedListItem } from '$lib/components/GroupedList';
 	import { idURLToUsername, validateIDURL, type IDURLValidity } from '$lib/idURL';
 	import type { BlahIdentity } from '@blah-im/core/identity';

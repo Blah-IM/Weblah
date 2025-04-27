@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
+	import Card from '$lib/components/Card.svelte';
 	import Dialog from '$lib/components/Dialog.svelte';
-	import { GroupedListContainer, GroupedListSection } from '$lib/components/GroupedList';
-	import GroupedListContent from '$lib/components/GroupedList/GroupedListContent.svelte';
+	import Link from '$lib/components/Link.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import { idURLToUsername } from '$lib/idURL';
+	import { identityDescriptionFilePath, idURLToUsername } from '$lib/idURL';
 	import type { BlahIdentity } from '@blah-im/core/identity';
 
 	interface Props {
@@ -19,6 +19,26 @@
 	const profileDescriptionString = $derived(
 		JSON.stringify(identity.generateIdentityDescription(), null, 2)
 	);
+
+	let copied = $state(false);
+	let jsonFileBlobHref: string | null = $state(null);
+
+	const copyToClipboard = async () => {
+		await navigator.clipboard.writeText(profileDescriptionString);
+		copied = true;
+		setTimeout(() => (copied = false), 2000);
+	};
+
+	$effect.pre(() => {
+		if (identity) {
+			const blob = new Blob([profileDescriptionString], { type: 'application/json' });
+			jsonFileBlobHref = URL.createObjectURL(blob);
+		}
+
+		return () => {
+			if (jsonFileBlobHref) URL.revokeObjectURL(jsonFileBlobHref);
+		};
+	});
 </script>
 
 <Dialog bind:open class="flex h-2/3 flex-col">
@@ -27,25 +47,28 @@
 		<Button variant="primary" onclick={() => (open = false)}>Done</Button>
 	</PageHeader>
 
-	<GroupedListContainer class="w-full grow overflow-x-auto">
-		<GroupedListSection>
-			{#snippet header()}
-				<div class="-me-4 flex min-w-0 items-end gap-2 text-base normal-case">
-					<p class="text-sf-primary">
-						For others to validate your domain as your username, put the content below at
-						<code>/.well-known/blah/profile.json</code>
-						under your domain.
-					</p>
-					<Button>Copy</Button>
-				</div>
-			{/snippet}
-			<GroupedListContent class="p-0">
-				<textarea
-					readonly
-					class="text-sf-primary block h-100 w-full resize-none overflow-x-auto px-4 py-3 font-mono"
-					value={profileDescriptionString}
-				></textarea>
-			</GroupedListContent>
-		</GroupedListSection>
-	</GroupedListContainer>
+	<div class="flex grow flex-col gap-3 p-3">
+		<p class="text-sf-primary px-4 text-sm">
+			For others to validate ownership of your domain, make text file below available as
+			<code>{identityDescriptionFilePath}</code>
+			under your domain, and make sure it allows any cross domain requests.
+			<Link href="/">Learn more...</Link>
+		</p>
+		<Card class="relative grow">
+			<textarea
+				readonly
+				class="text-sf-primary block h-full w-full resize-none overflow-x-auto px-4 py-3 font-mono text-sm"
+				value={profileDescriptionString}
+			></textarea>
+
+			<div class="absolute end-2 top-2">
+				<Button onclick={copyToClipboard}>
+					{#if copied}Copied!{:else}Copy{/if}
+				</Button>
+				{#if jsonFileBlobHref}
+					<Button href={jsonFileBlobHref} download="identity.json">Download</Button>
+				{/if}
+			</div>
+		</Card>
+	</div>
 </Dialog>
