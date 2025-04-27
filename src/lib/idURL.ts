@@ -1,8 +1,4 @@
-import {
-	BlahIdentity,
-	blahIdentityDescriptionSchema,
-	type BlahIdentityDescription
-} from '@blah-im/core/identity';
+import { BlahIdentity, blahIdentityDescriptionSchema } from '@blah-im/core/identity';
 
 export function idURLToUsername(idURL: string): string {
 	const url = new URL(idURL);

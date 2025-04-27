@@ -106,6 +106,24 @@ class AccountManager {
 		await this.loadAccounts();
 	}
 
+	async changePassword(
+		accountOrIdKeyId: Account | string,
+		oldPassword: string,
+		newPassword: string
+	) {
+		if (!this.keyDB) throw new Error('Account manager not initialized');
+
+		const idKeyId =
+			typeof accountOrIdKeyId === 'string' ? accountOrIdKeyId : accountOrIdKeyId.id_key;
+		const accountCreds = await this.keyDB.fetchAccount(idKeyId);
+		const encodedIdKeyPair = accountCreds?.encodedIdKeyPair;
+		if (!encodedIdKeyPair) throw new Error('No encoded ID key pair found');
+
+		const idKeyPair = await BlahKeyPair.fromEncoded(encodedIdKeyPair, oldPassword);
+		const newEncodedIdKeyPair = await idKeyPair.encode(newPassword);
+		await this.keyDB.updateEncodedIdKeyPair(idKeyId, newEncodedIdKeyPair);
+	}
+
 	async createAccount(profile: BlahProfile, password: string): Promise<string> {
 		if (!this.keyDB) throw new Error('Account manager not initialized');
 

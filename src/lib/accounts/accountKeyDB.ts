@@ -76,6 +76,21 @@ class AccountKeyDB {
 		return { idKeyId, encodedIdKeyPair, actKeyPair };
 	}
 
+	async updateEncodedIdKeyPair(
+		idKeyId: string,
+		encodedIdKeyPair: EncodedBlahKeyPair
+	): Promise<void> {
+		const tx = this.db.transaction(IDB_OBJECT_STORE_NAME, 'readwrite');
+		const currentObject = await tx.store.get(idKeyId);
+		if (!currentObject) {
+			await tx.done;
+			return;
+		}
+		currentObject.encodedIdKeyPair = encodedIdKeyPair;
+		await tx.store.put(currentObject);
+		await tx.done;
+	}
+
 	async remove(idKeyId: string): Promise<void> {
 		await this.db.delete(IDB_OBJECT_STORE_NAME, idKeyId);
 	}

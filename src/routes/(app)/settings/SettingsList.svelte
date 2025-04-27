@@ -41,7 +41,9 @@
 
 		<GroupedListSection>
 			<GroupedListItem icon={Bell}>Notifications</GroupedListItem>
-			<GroupedListItem icon={LockClosed}>Privacy and Security</GroupedListItem>
+			<SettingsListItem icon={LockClosed} route="/privacy-security">
+				Privacy and Security
+			</SettingsListItem>
 		</GroupedListSection>
 
 		<GroupedListSection>

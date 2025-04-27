@@ -1,12 +1,10 @@
 <script lang="ts">
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import accountsManager from '$lib/accounts/manager.svelte';
+	import { accountManager } from '$lib/accounts';
 	import {
 		GroupedListContainer,
 		GroupedListSection,
-		GroupedListInputItem,
-		GroupedListContent,
-		GroupedListItem
+		GroupedListInputItem
 	} from '$lib/components/GroupedList';
 	import type { BlahIdentity, BlahProfile } from '@blah-im/core/identity';
 	import ProfilePicture from '$lib/components/ProfilePicture.svelte';
@@ -17,7 +15,7 @@
 	import type { Node } from 'prosemirror-model';
 	import UsernameItem from './UsernameItem.svelte';
 
-	const currentAccount = $derived(accountsManager.currentAccount);
+	const currentAccount = $derived(accountManager.currentAccount);
 	let identity: BlahIdentity | null = $state(null);
 	let profile: BlahProfile | null = $state(null);
 	let initialBio: Node | null = $state(null);
@@ -29,7 +27,7 @@
 			const snapshot = $state.snapshot(currentAccount.profile.signee.payload);
 			profile = snapshot;
 			initialBio = blahRichTextToProseMirrorDoc([snapshot.bio ?? ''], messageSchema);
-			accountsManager.identityForAccount(currentAccount).then((x) => {
+			accountManager.identityForAccount(currentAccount).then((x) => {
 				identity = x;
 			});
 		}
@@ -39,9 +37,9 @@
 		if (!currentAccount || !profile) return;
 
 		isBusy = true;
-		const identity = await accountsManager.identityForAccount(currentAccount);
+		const identity = await accountManager.identityForAccount(currentAccount);
 		await identity.updateProfile(profile);
-		await accountsManager.saveIdentity(identity);
+		await accountManager.saveIdentity(identity);
 		isBusy = false;
 	}
 </script>
@@ -67,7 +65,7 @@
 
 		<GroupedListSection header="Bio">
 			<RichTextInput
-				class="text-ss-primary p-4 shadow-none ring-0"
+				class="text-ss-primary px-4 py-3 shadow-none ring-0"
 				schema={messageSchema}
 				onDocChange={(doc) => profile && (profile.bio = doc.textContent)}
 				placeholder="a 25 yo. artist from Paris."
