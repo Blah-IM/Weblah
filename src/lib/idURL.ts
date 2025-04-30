@@ -1,4 +1,8 @@
-import { BlahIdentity, blahIdentityDescriptionSchema } from '@blah-im/core/identity';
+import {
+	BlahIdentity,
+	blahIdentityDescriptionSchema,
+	getIdentityDescriptionFileURL
+} from '@blah-im/core/identity';
 
 export function idURLToUsername(idURL: string): string {
 	const url = new URL(idURL);
@@ -24,22 +28,13 @@ export type IDURLValidity =
 			  }
 	  ));
 export async function validateIDURL(url: string, identity: BlahIdentity): Promise<IDURLValidity> {
-	const idURL = URL.parse(url);
-	if (
-		!idURL ||
-		idURL.protocol !== 'https:' ||
-		idURL.pathname !== '/' ||
-		idURL.search ||
-		idURL.username ||
-		idURL.password
-	)
-		return { valid: false, reason: 'invalid-url' };
+	let profileFileURL: string;
 
-	const profileFileURL = (() => {
-		let url = idURL;
-		url.pathname = identityDescriptionFilePath;
-		return url.toString();
-	})();
+	try {
+		profileFileURL = getIdentityDescriptionFileURL(url);
+	} catch (e) {
+		return { valid: false, reason: 'invalid-url' };
+	}
 
 	try {
 		const response = await fetch(profileFileURL, {

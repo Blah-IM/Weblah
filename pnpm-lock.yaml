@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@blah-im/core':
-        specifier: ^0.6.0
-        version: 0.6.0
+        specifier: ^0.7.0
+        version: 0.7.0
       '@zeabur/svelte-adapter':
         specifier: ^1.0.0
         version: 1.0.0(@sveltejs/kit@2.20.7(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.28.2)(vite@6.3.3(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.28.2)(vite@6.3.3(jiti@2.4.2)(lightningcss@1.29.2)))
@@ -133,8 +133,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@blah-im/core@0.6.0':
-    resolution: {integrity: sha512-CBYFGbCDkQ1vXGYskKSxCWiknaga63NCtmpraZyWjHq8ZyNcG6UYIe6K0DMCJ7BtkbImW+7jk/k4Z2J+0e2kSw==}
+  '@blah-im/core@0.7.0':
+    resolution: {integrity: sha512-S3XhaETyRdz9kdeMHrk0yokDYbWaFKvC12uJjd4FGAZZx+40w9+RUCrDxkrqifn8QOiZR3xw6eAryeLILNuIcA==}
 
   '@esbuild/aix-ppc64@0.19.12':
     resolution: {integrity: sha512-bmoCYyWdEL3wDQIVbcyzRyeKLgk2WtWLTWz1ZIAZF/EGbNOwSA6ew3PftJ1PqMiOOGu0OyFMzG53L0zqIpPeNA==}
@@ -2074,7 +2074,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@blah-im/core@0.6.0':
+  '@blah-im/core@0.7.0':
     dependencies:
       zod: 3.24.3
 
