@@ -190,6 +190,10 @@
 					<p>
 						Remember to change it on all other devices to which you granted <em>full access</em>.
 					</p>
+					<p>
+						If you keeps backups of your identity, please update your backup file so it is encrypted
+						with the new password.
+					</p>
 				</div>
 			{/if}
 		</GroupedListContainer>

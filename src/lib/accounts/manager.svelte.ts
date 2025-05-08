@@ -5,7 +5,7 @@ import {
 	type BlahProfile
 } from '@blah-im/core/identity';
 import { type IdentityDB, openIdentityDB } from './identityDB';
-import { BlahKeyPair } from '@blah-im/core/crypto';
+import { BlahKeyPair, type EncodedBlahKeyPair } from '@blah-im/core/crypto';
 import { browser } from '$app/environment';
 
 export type Account = BlahIdentityDescription & {
@@ -104,6 +104,17 @@ class AccountManager {
 		const identityDesc = identity.generateIdentityDescription();
 		await this.identityDB.updateIdentity(identityDesc);
 		await this.loadAccounts();
+	}
+
+	async exportAccountIDKeyPair(accountOrIdKeyId: Account | string): Promise<EncodedBlahKeyPair> {
+		if (!this.keyDB) throw new Error('Account manager not initialized');
+
+		const idKeyId =
+			typeof accountOrIdKeyId === 'string' ? accountOrIdKeyId : accountOrIdKeyId.id_key;
+		const accountCreds = await this.keyDB.fetchAccount(idKeyId);
+		const encodedIdKeyPair = accountCreds?.encodedIdKeyPair;
+		if (!encodedIdKeyPair) throw new Error('No encoded ID key pair found');
+		return encodedIdKeyPair;
 	}
 
 	async changePassword(
