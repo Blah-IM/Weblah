@@ -7,25 +7,36 @@ import { BlahError } from './error';
 const RECONNECT_TIMEOUT = 1500;
 const RECONNECT_MAX_TRIES = 5;
 
+export type MessageListener = (message: BlahSignedPayload<BlahMessage>) => void;
+export interface MessageFilter {
+	roomID?: string;
+}
+export interface MessageSubscription {
+	unsubscribe: () => void;
+}
+
 export class BlahChatServerConnection {
 	private static commonHeaders = { 'x-blah-client': `Weblah/${version}` };
 
 	private endpoint_: string;
-	private keypair: BlahKeyPair | null;
+	private keypair_: BlahKeyPair | null;
 
 	get endpoint() {
 		return this.endpoint_;
 	}
 
+	get keypair() {
+		return this.keypair_;
+	}
+
 	private webSocket: WebSocket | null = null;
-	private roomListeners: Map<string, Set<(message: BlahSignedPayload<BlahMessage>) => void>> =
-		new Map();
-	private serverListeners: Set<(message: BlahSignedPayload<BlahMessage>) => void> = new Set();
+	private roomListeners: Map<string, Set<MessageListener>> = new Map();
+	private serverListeners: Set<MessageListener> = new Set();
 	private webSocketRetryTimeout: number | null = null;
 
 	constructor(endpoint: string, keypair: BlahKeyPair | null = null) {
 		this.endpoint_ = endpoint;
-		this.keypair = keypair;
+		this.keypair_ = keypair;
 	}
 
 	private async generateAuthHeader(): Promise<{ Authorization: string }> {
@@ -62,7 +73,7 @@ export class BlahChatServerConnection {
 		});
 	}
 
-	private async apiCall<P, R>(method: 'POST' | 'GET', path: `/${string}`, payload?: P): Promise<R> {
+	public async apiCall<P, R>(method: 'POST' | 'GET', path: `/${string}`, payload?: P): Promise<R> {
 		if (payload && !this.keypair) throw new Error('Must make authorized API call with a keypair');
 
 		let response: Response;
@@ -82,53 +93,18 @@ export class BlahChatServerConnection {
 		return await response.json();
 	}
 
-	async joinRoom(id: string): Promise<void> {
-		if (!this.keypair) throw new Error('Must join with a keypair');
+	async tryRegisterIfNoyYet(): Promise<void> {
+		if (!this.keypair) throw new Error('Must register with a keypair');
 
-		const payload: BlahUserJoinMessage = {
-			typ: 'add_member',
-			room: id,
-			permission: 1,
-			user: this.keypair.id
-		};
-
-		await this.apiCall('POST', `/room/${id}/admin`, payload);
-	}
-
-	private async fetchRoomList(filter: 'joined' | 'public'): Promise<BlahRoomInfo[]> {
-		const { rooms }: { rooms: BlahRoomInfo[] } = await this.apiCall(
-			'GET',
-			`/room?filter=${filter}`
-		);
-		return rooms;
-	}
-
-	async fetchJoinedRooms(): Promise<BlahRoomInfo[]> {
-		if (!this.keypair) return [];
-		return await this.fetchRoomList('joined');
-	}
-
-	async discoverRooms(): Promise<BlahRoomInfo[]> {
-		return await this.fetchRoomList('public');
-	}
-
-	async sendMessage(room: string, message: BlahRichText): Promise<void> {
-		if (!this.keypair) throw new Error('Must send message with a keypair');
-		const payload: BlahMessage = { room, rich_text: message, typ: 'chat' };
-		await this.apiCall('POST', `/room/${room}/item`, payload);
-	}
-
-	async fetchRoomInfo(roomId: string): Promise<BlahRoomInfo> {
-		const room: BlahRoomInfo = await this.apiCall('GET', `/room/${roomId}`);
-		return room;
-	}
-
-	async fetchRoomHistory(roomId: string): Promise<BlahSignedPayload<BlahMessage>[]> {
-		const { items }: { items: BlahSignedPayload<BlahMessage>[] } = await this.apiCall(
-			'GET',
-			`/room/${roomId}/item`
-		);
-		return items;
+		try {
+			await this.apiCall('GET', '/user/me');
+		} catch (e) {
+			if (e instanceof BlahError && e.statusCode === 404) {
+				// TODO: Register user
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	private createWebSocket(remainingTries: number = RECONNECT_MAX_TRIES - 1): WebSocket {
@@ -180,41 +156,36 @@ export class BlahChatServerConnection {
 	}
 
 	changeKeyPair(keypair: BlahKeyPair | null) {
-		this.keypair = keypair;
+		this.keypair_ = keypair;
 		if (this.webSocket) {
 			this.disconnect();
 			this.connect();
 		}
 	}
 
-	subscribeRoom(
-		roomId: string,
-		onNewMessage: (message: BlahSignedPayload<BlahMessage>) => void
-	): { unsubscribe: () => void } {
-		const listeners = this.roomListeners.get(roomId) ?? new Set();
-		listeners.add(onNewMessage);
-		this.roomListeners.set(roomId, listeners);
+	subscribe(listener: MessageListener, filter: MessageFilter = {}): MessageSubscription {
+		const roomID = filter.roomID;
 
-		return {
-			unsubscribe: () => {
-				const listeners = this.roomListeners.get(roomId) ?? new Set();
-				listeners.delete(onNewMessage);
-				if (listeners.size === 0) {
-					this.roomListeners.delete(roomId);
+		if (roomID) {
+			const listeners = this.roomListeners.get(roomID) ?? new Set();
+			listeners.add(listener);
+			this.roomListeners.set(roomID, listeners);
+
+			return {
+				unsubscribe: () => {
+					const listeners = this.roomListeners.get(roomID) ?? new Set();
+					listeners.delete(listener);
+					if (listeners.size === 0) {
+						this.roomListeners.delete(roomID);
+					}
 				}
-			}
-		};
-	}
+			};
+		}
 
-	subscribe(onNewMessage: (message: BlahSignedPayload<BlahMessage>) => void): {
-		unsubscribe: () => void;
-	} {
-		this.serverListeners.add(onNewMessage);
+		this.serverListeners.add(listener);
 
 		return {
-			unsubscribe: () => {
-				this.serverListeners.delete(onNewMessage);
-			}
+			unsubscribe: () => this.serverListeners.delete(listener)
 		};
 	}
 }
