@@ -6,10 +6,7 @@
 		variant?: 'primary' | 'secondary';
 		class?: string;
 		children?: import('svelte').Snippet;
-	} & Omit<
-		({ href: string } & HTMLAnchorAttributes) | ({ href?: undefined } & HTMLButtonAttributes),
-		'class'
-	>;
+	} & (({ href: string } & Omit<HTMLAnchorAttributes, 'href'>) | HTMLButtonAttributes);
 
 	let { variant = 'secondary', class: externalClass, children, ...rest }: Props = $props();
 
