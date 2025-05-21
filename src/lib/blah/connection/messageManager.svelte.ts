@@ -1,10 +1,10 @@
 import type { BlahRichText } from '@blah-im/core/richText';
 import type { BlahSignedPayload } from '@blah-im/core/crypto';
 
-import type { BlahChatServerConnection } from './chatServer';
+import type { BlahChatServerConnection } from './connection';
 import type { BlahMessage } from '../structures';
 
-export default class MessageManager {
+export class MessageManager {
 	connection: BlahChatServerConnection;
 	roomID: string;
 	messages: BlahSignedPayload<BlahMessage>[] = $state([]);
@@ -15,7 +15,7 @@ export default class MessageManager {
 	}
 
 	async sendMessage(message: BlahRichText): Promise<void> {
-		if (!this.connection.keypair) throw new Error('Must send message with a keypair');
+		if (!this.connection.identity) throw new Error('Must send message with a keypair');
 		const payload: BlahMessage = { room: this.roomID, rich_text: message, typ: 'chat' };
 		await this.connection.apiCall('POST', `/room/${payload.room}/item`, payload);
 	}

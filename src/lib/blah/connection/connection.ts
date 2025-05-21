@@ -1,8 +1,16 @@
 import { version } from '$app/environment';
 import type { BlahRichText } from '@blah-im/core/richText';
-import type { BlahKeyPair, BlahSignedPayload } from '@blah-im/core/crypto';
-import type { BlahAuth, BlahMessage, BlahRoomInfo, BlahUserJoinMessage } from '../structures';
+import type { BlahKeyPair, BlahSignedPayload, SignOptions } from '@blah-im/core/crypto';
+import {
+	blahUserUnregisteredResponseSchema,
+	type BlahAuth,
+	type BlahMessage,
+	type BlahRoomInfo,
+	type BlahUserJoinMessage,
+	type BlahUserRegisterRequest
+} from '../structures';
 import { BlahError } from './error';
+import type { BlahIdentity } from '@blah-im/core/identity';
 
 const RECONNECT_TIMEOUT = 1500;
 const RECONNECT_MAX_TRIES = 5;
@@ -19,14 +27,14 @@ export class BlahChatServerConnection {
 	private static commonHeaders = { 'x-blah-client': `Weblah/${version}` };
 
 	private endpoint_: string;
-	private keypair_: BlahKeyPair | null;
+	private identity_: BlahIdentity | null;
 
 	get endpoint() {
 		return this.endpoint_;
 	}
 
-	get keypair() {
-		return this.keypair_;
+	get identity() {
+		return this.identity_;
 	}
 
 	private webSocket: WebSocket | null = null;
@@ -34,15 +42,15 @@ export class BlahChatServerConnection {
 	private serverListeners: Set<MessageListener> = new Set();
 	private webSocketRetryTimeout: number | null = null;
 
-	constructor(endpoint: string, keypair: BlahKeyPair | null = null) {
-		this.endpoint_ = endpoint;
-		this.keypair_ = keypair;
+	constructor(endpoint: string, identity: BlahIdentity | null = null) {
+		this.endpoint_ = new URL(endpoint).href.replace(/\/$/, '');
+		this.identity_ = identity;
 	}
 
 	private async generateAuthHeader(): Promise<{ Authorization: string }> {
-		if (!this.keypair) throw new Error('Must generate auth header with a keypair');
+		if (!this.identity) throw new Error('Must generate auth header with an identity');
 		const authPayload: BlahAuth = { typ: 'auth' };
-		const signedAuthPayload = await this.keypair.signPayload(authPayload);
+		const signedAuthPayload = await this.identity.signPayload(authPayload);
 		return { Authorization: JSON.stringify(signedAuthPayload) };
 	}
 
@@ -57,11 +65,12 @@ export class BlahChatServerConnection {
 	private async fetchWithSignedPayload<P>(
 		url: string,
 		payload: P,
-		init?: RequestInit
+		init?: RequestInit,
+		signOptions?: Omit<SignOptions, 'identityKeyID'>
 	): Promise<Response> {
-		if (!this.keypair) throw new Error('Must fetch with a keypair');
+		if (!this.identity) throw new Error('Must fetch with an identity');
 
-		const signedPayload = await this.keypair.signPayload(payload);
+		const signedPayload = await this.identity.signPayload(payload, signOptions);
 		return fetch(url, {
 			...init,
 			headers: {
@@ -73,12 +82,18 @@ export class BlahChatServerConnection {
 		});
 	}
 
-	public async apiCall<P, R>(method: 'POST' | 'GET', path: `/${string}`, payload?: P): Promise<R> {
-		if (payload && !this.keypair) throw new Error('Must make authorized API call with a keypair');
+	public async apiCall<P, R>(
+		method: 'POST' | 'GET',
+		path: `/${string}`,
+		payload?: P,
+		signOptions?: Omit<SignOptions, 'identityKeyID'>
+	): Promise<R> {
+		if (payload && !this.identity)
+			throw new Error('Must make authorized API call with an identity');
 
 		let response: Response;
 		if (method === 'GET') {
-			if (this.keypair) {
+			if (this.identity) {
 				response = await this.fetchWithAuthHeader(`${this.endpoint_}${path}`);
 			} else {
 				response = await fetch(`${this.endpoint_}${path}`, {
@@ -86,7 +101,12 @@ export class BlahChatServerConnection {
 				});
 			}
 		} else {
-			response = await this.fetchWithSignedPayload(`${this.endpoint_}${path}`, payload, { method });
+			response = await this.fetchWithSignedPayload(
+				`${this.endpoint_}${path}`,
+				payload,
+				{ method },
+				signOptions
+			);
 		}
 
 		if (!response.ok) throw await BlahError.fromResponse(response);
@@ -94,13 +114,28 @@ export class BlahChatServerConnection {
 	}
 
 	async tryRegisterIfNoyYet(): Promise<void> {
-		if (!this.keypair) throw new Error('Must register with a keypair');
+		if (!this.identity) throw new Error('Must register with an identity');
 
 		try {
 			await this.apiCall('GET', '/user/me');
 		} catch (e) {
 			if (e instanceof BlahError && e.statusCode === 404) {
-				// TODO: Register user
+				const { data } = blahUserUnregisteredResponseSchema.safeParse(e.raw);
+				if (!data) throw e;
+
+				const request: BlahUserRegisterRequest = {
+					typ: 'user_register',
+					server_url: this.endpoint_,
+					id_url: this.identity.profile.id_urls[0],
+					id_key: this.identity.idPublicKey.id,
+					challenge: {
+						pow: { nonce: data.register_challenge.pow.nonce }
+					}
+				};
+
+				const response = await this.apiCall('POST', '/user/register', request, {
+					powDifficulty: data.register_challenge.pow.difficulty
+				});
 			} else {
 				throw e;
 			}
@@ -122,7 +157,7 @@ export class BlahChatServerConnection {
 		socket.addEventListener('close', onSocketClose);
 
 		socket.addEventListener('open', async () => {
-			if (this.keypair) {
+			if (this.identity) {
 				const { Authorization } = await this.generateAuthHeader();
 				socket.send(Authorization);
 			}
@@ -146,7 +181,7 @@ export class BlahChatServerConnection {
 	}
 
 	connect() {
-		if (!this.webSocket && this.keypair) this.webSocket = this.createWebSocket();
+		if (!this.webSocket && this.identity) this.webSocket = this.createWebSocket();
 	}
 
 	disconnect() {
@@ -155,8 +190,8 @@ export class BlahChatServerConnection {
 		this.webSocket = null;
 	}
 
-	changeKeyPair(keypair: BlahKeyPair | null) {
-		this.keypair_ = keypair;
+	changeIdentity(newIdentity: BlahIdentity | null) {
+		this.identity_ = newIdentity;
 		if (this.webSocket) {
 			this.disconnect();
 			this.connect();

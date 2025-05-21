@@ -1,7 +1,7 @@
 import type { BlahRoomInfo, BlahUserJoinMessage } from '../structures';
-import type { BlahChatServerConnection } from './chatServer';
+import type { BlahChatServerConnection } from './connection';
 
-export default class RoomManager {
+export class RoomManager {
 	connection: BlahChatServerConnection;
 	joinedRooms: BlahRoomInfo[] = $state([]);
 	publicRooms: BlahRoomInfo[] = $state([]);
@@ -11,14 +11,14 @@ export default class RoomManager {
 	}
 
 	async joinRoom(id: string): Promise<void> {
-		const keypair = this.connection.keypair;
-		if (!keypair) throw new Error('Must join with a keypair');
+		const identity = this.connection.identity;
+		if (!identity) throw new Error('Must join with an identity');
 
 		const payload: BlahUserJoinMessage = {
 			typ: 'add_member',
 			room: id,
 			permission: 1,
-			user: keypair.id
+			user: identity.idPublicKey.id
 		};
 
 		await this.connection.apiCall('POST', `/room/${id}/admin`, payload);
@@ -33,7 +33,7 @@ export default class RoomManager {
 	}
 
 	async fetchJoinedRooms() {
-		if (!this.connection.keypair) return [];
+		if (!this.connection.identity) return [];
 		this.joinedRooms = await this.fetchRoomList('joined');
 	}
 
