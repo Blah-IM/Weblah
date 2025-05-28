@@ -13,7 +13,7 @@
 		"format": "prettier --write ."
 	},
 	"type": "module",
-	"packageManager": "pnpm@10.10.0",
+	"packageManager": "pnpm@10.11.0",
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/kit": "^2.21.1",
