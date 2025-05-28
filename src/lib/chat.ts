@@ -7,12 +7,6 @@ import { BlahError } from './blah/connection/error';
 const MAX_MESSAGES_PER_SECTION = 10;
 const SHOW_TIME_AFTER_SILENCE = 30 * 60 * 1000;
 
-export type MessageSection = {
-	sender?: User;
-	messages: Message[];
-	date?: Date;
-};
-
 export function useChat(
 	server: BlahChatServerConnection,
 	chatId: string

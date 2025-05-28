@@ -1,12 +1,9 @@
 import { version } from '$app/environment';
-import type { BlahRichText } from '@blah-im/core/richText';
-import type { BlahKeyPair, BlahSignedPayload, SignOptions } from '@blah-im/core/crypto';
+import type { BlahSignedPayload, SignOptions } from '@blah-im/core/crypto';
 import {
 	blahUserUnregisteredResponseSchema,
 	type BlahAuth,
 	type BlahMessage,
-	type BlahRoomInfo,
-	type BlahUserJoinMessage,
 	type BlahUserRegisterRequest
 } from '../structures';
 import { BlahError } from './error';
@@ -54,7 +51,7 @@ export class BlahChatServerConnection {
 		return { Authorization: JSON.stringify(signedAuthPayload) };
 	}
 
-	private async fetchWithAuthHeader(url: string, init?: RequestInit): Promise<Response> {
+	private async fetchWithAuthHeader(url: string | URL, init?: RequestInit): Promise<Response> {
 		const authHeader = await this.generateAuthHeader();
 		return fetch(url, {
 			...init,
@@ -84,19 +81,27 @@ export class BlahChatServerConnection {
 
 	public async apiCall<P, R>(
 		method: 'POST' | 'GET',
-		path: `/${string}`,
+		path: `/${string}` | [`/${string}`, { [query: string]: string | null | undefined }],
 		payload?: P,
 		signOptions?: Omit<SignOptions, 'identityKeyID'>
 	): Promise<R> {
 		if (payload && !this.identity)
 			throw new Error('Must make authorized API call with an identity');
 
+		const url = new URL(typeof path === 'string' ? path : path[0], this.endpoint_);
+		const query = typeof path === 'string' ? undefined : path[1];
+		if (query) {
+			for (const [key, value] of Object.entries(query)) {
+				if (value) url.searchParams.append(key, value);
+			}
+		}
+
 		let response: Response;
 		if (method === 'GET') {
 			if (this.identity) {
-				response = await this.fetchWithAuthHeader(`${this.endpoint_}${path}`);
+				response = await this.fetchWithAuthHeader(url);
 			} else {
-				response = await fetch(`${this.endpoint_}${path}`, {
+				response = await fetch(url, {
 					headers: BlahChatServerConnection.commonHeaders
 				});
 			}

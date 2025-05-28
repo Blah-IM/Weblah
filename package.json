@@ -37,7 +37,7 @@
 		"vitest": "^3.1.4"
 	},
 	"dependencies": {
-		"@blah-im/core": "^0.9.0",
+		"@blah-im/core": "^0.10.0",
 		"@zeabur/svelte-adapter": "^1.0.0",
 		"bits-ui": "^1.5.3",
 		"canonicalize": "^2.1.0",
