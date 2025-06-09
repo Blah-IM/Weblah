@@ -9,12 +9,14 @@ type SavedObject = {
 	encodedIdKeyPair?: EncodedBlahKeyPair;
 	actKeyId: string;
 	actKeyPrivate: CryptoKey;
+	chatServers: string[];
 };
 
 export type AccountCredentials = {
 	idKeyId: string;
 	encodedIdKeyPair?: EncodedBlahKeyPair;
 	actKeyPair: BlahKeyPair;
+	chatServers: string[];
 };
 
 interface AccountKeyDBSchema extends DBSchema {
@@ -32,7 +34,8 @@ async function savedObjectToAccountCredentials(
 	return {
 		idKeyId: savedObject.idKeyId,
 		encodedIdKeyPair: savedObject.encodedIdKeyPair,
-		actKeyPair: new BlahKeyPair(publicKey, savedObject.actKeyPrivate)
+		actKeyPair: new BlahKeyPair(publicKey, savedObject.actKeyPrivate),
+		chatServers: savedObject.chatServers
 	};
 }
 
@@ -59,13 +62,15 @@ class AccountKeyDB {
 	async addAccount(
 		idKeyId: string,
 		actKeyPair: BlahKeyPair,
-		encodedIdKeyPair?: EncodedBlahKeyPair
+		encodedIdKeyPair?: EncodedBlahKeyPair,
+		chatServers: string[] = []
 	): Promise<AccountCredentials> {
 		const newObject: SavedObject = {
 			idKeyId,
 			encodedIdKeyPair,
 			actKeyId: actKeyPair.id,
-			actKeyPrivate: actKeyPair.privateKey
+			actKeyPrivate: actKeyPair.privateKey,
+			chatServers
 		};
 
 		const tx = this.db.transaction(IDB_OBJECT_STORE_NAME, 'readwrite');
@@ -73,7 +78,7 @@ class AccountKeyDB {
 		await tx.store.put({ ...currentObject, ...newObject });
 		await tx.done;
 
-		return { idKeyId, encodedIdKeyPair, actKeyPair };
+		return { idKeyId, encodedIdKeyPair, actKeyPair, chatServers };
 	}
 
 	async updateEncodedIdKeyPair(

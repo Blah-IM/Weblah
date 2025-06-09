@@ -25,6 +25,7 @@ class AccountManager {
 	currentAccount: Account | null = $derived(
 		this.accounts.find((account) => account.id_key === this.currentAccountId) ?? null
 	);
+	#connectionPool: ChatServerConnectionPool;
 
 	constructor() {
 		if (browser) {

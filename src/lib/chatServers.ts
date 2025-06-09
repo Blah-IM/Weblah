@@ -1,29 +1,29 @@
-import { persisted } from 'svelte-persisted-store';
 import { get } from 'svelte/store';
-import { BlahChatServerConnection } from './blah/connection/chatServer';
+import { BlahChatServerConnection } from './blah/connection';
 import { BlahKeyPair, type EncodedBlahKeyPair } from '@blah-im/core/crypto';
 import { ChatListManager } from './chatList';
 import { browser } from '$app/environment';
 import { GlobalSearchManager } from './globalSearch';
+import type { BlahIdentity } from '@blah-im/core/identity';
 
-export const chatServers = persisted<string[]>('weblah-chat-servers', ['https://blah.oxa.li/api']);
+export const defaultChatServers = ['https://blah.oxa.li/api'];
 
-class ChatServerConnectionPool {
-	private connections: Map<string, BlahChatServerConnection> = new Map();
-	private keypair: BlahKeyPair | null = null;
+export class ChatServerConnectionPool {
+	#connections: Map<string, BlahChatServerConnection> = new Map();
+	#identity: BlahIdentity | null = null;
+	#chatServers: string[] = defaultChatServers;
+
 	chatList: ChatListManager = new ChatListManager();
 	searchManager: GlobalSearchManager = new GlobalSearchManager(this.connections);
 
-	constructor() {
-		if (browser) {
-			chatServers.subscribe(this.onChatServersChange.bind(this));
-			// currentKeyPair.subscribe(this.onKeyPairChange.bind(this));
-		}
+	constructor(identity: BlahIdentity, chatServers: string[] = defaultChatServers) {
+		this.#identity = identity;
+		this.#chatServers = chatServers;
 	}
 
 	private createAndConnect(endpoint: string) {
-		const connection = new BlahChatServerConnection(endpoint, this.keypair);
-		this.connections.set(endpoint, connection);
+		const connection = new BlahChatServerConnection(endpoint, this.#identity);
+		this.#connections.set(endpoint, connection);
 		connection.connect();
 		this.setupChatList(connection);
 	}
@@ -84,5 +84,3 @@ class ChatServerConnectionPool {
 		return this.connections.get(endpoint) ?? null;
 	}
 }
-
-export const chatServerConnectionPool = new ChatServerConnectionPool();

@@ -138,7 +138,7 @@ export class BlahChatServerConnection {
 					}
 				};
 
-				const response = await this.apiCall('POST', '/user/register', request, {
+				await this.apiCall('POST', '/user/register', request, {
 					powDifficulty: data.register_challenge.pow.difficulty
 				});
 			} else {
@@ -186,6 +186,7 @@ export class BlahChatServerConnection {
 	}
 
 	connect() {
+		this.tryRegisterIfNoyYet();
 		if (!this.webSocket && this.identity) this.webSocket = this.createWebSocket();
 	}
 
